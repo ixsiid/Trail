@@ -1,0 +1,26 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "C:/Users/tal/.vst/VST3_SDK",
+                "C:/Users/tal/.vst/VST3_SDK/vstgui4"
+            ],
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "path": []
+            },
+            "defines": [
+                "_WIN32",
+                "_MSC_VER",
+                "_WINDOWS",
+                ""
+            ],
+            "intelliSenseMode": "msvc-x64",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "compilerPath": "C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.27.29110/bin/Hostx64/x64/cl.exe"
+        }
+    ],
+    "version": 4
+}
