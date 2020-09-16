@@ -1,5 +1,4 @@
 #include "../include/gui.h"
-#include "../include/waveview.h"
 
 namespace Steinberg {
 namespace HelloWorld {
@@ -8,7 +7,7 @@ GUI::GUI(void* controller) : VSTGUIEditor(controller) {
 	ViewRect viewRect(0, 0, 200, 200);
 	setRect(viewRect);
 
-	wave = nullptr;
+//	wave = nullptr;
 }
 
 bool PLUGIN_API GUI::open(void* parent, const PlatformType& platformType)

@@ -3,11 +3,9 @@ set(plug_sources
     include/plugids.h
     include/plugprocessor.h
     include/version.h
-    include/gui.h
     source/plugfactory.cpp
     source/plugcontroller.cpp
     source/plugprocessor.cpp
-    source/gui.cpp
 )
 
 if(SMTG_ADD_VSTGUI)
