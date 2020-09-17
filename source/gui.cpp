@@ -1,13 +1,14 @@
 #include "../include/gui.h"
 
+#include "../include/waveview.h"
+#include "../include/dft.h"
+
 namespace Steinberg {
 namespace HelloWorld {
 
 GUI::GUI(void* controller) : VSTGUIEditor(controller) {
-	ViewRect viewRect(0, 0, 200, 200);
+	ViewRect viewRect(0, 0, 800, 600);
 	setRect(viewRect);
-
-	wave = nullptr;
 }
 
 bool PLUGIN_API GUI::open(void* parent, const PlatformType& platformType)
@@ -20,7 +21,7 @@ bool PLUGIN_API GUI::open(void* parent, const PlatformType& platformType)
 	if (frame) return false;
  
 	// 作成するフレームのサイズを設定
-	CRect size(0, 0, 200, 200);
+	CRect size(0, 0, 800, 600);
  
 	// フレームを作成。作成に失敗したら(NULLなら)終了。
 	// 引数には、フレームサイズ、自作GUIクラスのポインタを指定する
@@ -32,9 +33,10 @@ bool PLUGIN_API GUI::open(void* parent, const PlatformType& platformType)
 	frame->setBackground(cbmp); // フレームに背景画像を設定
 	cbmp->forget();	// フレームに設定後は背景画像はforgetで解放しておく
 
-	CRect waveSize(10, 10, 120, 120);
-	wave = new WaveView(waveSize, 2048);
-	frame->addView(wave);
+	CRect waveSize(40, 10, 512, 480);
+	Static::wave = new WaveView(waveSize);
+	if (Static::dft) Static::wave->setBuffer(Static::dft->spectrum);
+	frame->addView(Static::wave);
  
 	// 作成したフレームを開く
 	frame->open(parent);
@@ -45,8 +47,8 @@ bool PLUGIN_API GUI::open(void* parent, const PlatformType& platformType)
 
 CMessageResult GUI::notify(CBaseObject *sender, const char *message) {
 	if (message == CVSTGUITimer::kMsgTimer) {
-		if (wave != nullptr) {
-			wave->update();
+		if (Static::wave != nullptr) {
+			Static::wave->update();
 		}
 	}
 

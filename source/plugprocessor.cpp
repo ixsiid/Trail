@@ -36,10 +36,14 @@
 
 #include "../include/plugprocessor.h"
 
+#include "../include/gui.h"
 #include "../include/plugids.h"
 #include "base/source/fstreamer.h"
 #include "pluginterfaces/base/ibstream.h"
 #include "pluginterfaces/vst/ivstparameterchanges.h"
+
+#include "../include/waveview.h"
+#include "../include/dft.h"
 
 namespace Steinberg {
 namespace HelloWorld {
@@ -48,6 +52,19 @@ namespace HelloWorld {
 PlugProcessor::PlugProcessor() {
 	// register its editor class
 	setControllerClass(MyControllerUID);
+	
+	int bufferSize = Static::num * 2 + 4096;
+	buffer = new float[bufferSize];
+	for(int i=0; i<bufferSize; i++) buffer[i] = 0;
+	index  = 0;
+
+	Static::dft = new DFT();
+	if (Static::wave) Static::wave->setBuffer(Static::dft->spectrum);
+}
+
+PlugProcessor::~PlugProcessor() {
+	delete[] buffer;
+	delete Static::dft;
 }
 
 //-----------------------------------------------------------------------------
@@ -90,12 +107,12 @@ tresult PLUGIN_API PlugProcessor::setActive(TBool state) {
 
 		// Allocate Memory Here
 		// Ex: algo.create ();
-	} else { // Release
+	} else {	// Release
 
 		// Free Memory if still allocated
 		// Ex: if(algo.isCreated ()) { algo.destroy (); }
 	}
-	
+
 	return AudioEffect::setActive(state);
 }
 
@@ -142,7 +159,15 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData& data) {
 	if (data.numSamples > 0) {
 		int bus = 0;
 		int ch  = 0;
-		// dft->process(data.inputs[bus].channelBuffers32[ch], data.outputs[bus].channelBuffers32[ch], data.numSamples);
+
+		size_t size = sizeof(Vst::Sample32) * data.numSamples;
+
+		memcpy(buffer + index, data.inputs[bus].channelBuffers32[ch], size);
+		memcpy(buffer + index + Static::num, data.inputs[bus].channelBuffers32[ch], size);
+		index	= (index + data.numSamples) & (Static::num - 1);
+		Static::dft->process(buffer + index);
+
+		memcpy(data.outputs[bus].channelBuffers32[ch], buffer + index, size);
 
 		// Process Algorithm
 		// Ex: algo.process (data.inputs[0].channelBuffers32, data.outputs[0].channelBuffers32,

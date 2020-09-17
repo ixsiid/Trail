@@ -37,6 +37,7 @@
 #pragma once
 
 #include "public.sdk/source/vst/vstaudioeffect.h"
+#include "static.h"
 
 namespace Steinberg {
 namespace HelloWorld {
@@ -46,6 +47,7 @@ class PlugProcessor : public Vst::AudioEffect
 {
 public:
 	PlugProcessor ();
+	~PlugProcessor();
 
 	tresult PLUGIN_API initialize (FUnknown* context) SMTG_OVERRIDE;
 	tresult PLUGIN_API setBusArrangements (Vst::SpeakerArrangement* inputs, int32 numIns,
@@ -68,6 +70,10 @@ protected:
 	Vst::ParamValue mParam1 = 0;
 	int16 mParam2 = 0;
 	bool mBypass = false;
+
+	private:
+	float * buffer;
+	int index;
 };
 
 //------------------------------------------------------------------------

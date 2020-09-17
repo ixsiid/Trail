@@ -3,13 +3,20 @@ set(plug_sources
     include/plugids.h
     include/plugprocessor.h
     include/version.h
-    include/gui.h
-    include/waveview.h
     source/plugfactory.cpp
     source/plugcontroller.cpp
     source/plugprocessor.cpp
+
+    include/static.h
+    source/static.cpp
+
+    include/gui.h
     source/gui.cpp
+    include/waveview.h
     source/waveview.cpp
+
+    include/dft.h
+    source/dft.cpp
 )
 
 if(SMTG_ADD_VSTGUI)
