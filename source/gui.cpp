@@ -7,7 +7,7 @@ GUI::GUI(void* controller) : VSTGUIEditor(controller) {
 	ViewRect viewRect(0, 0, 200, 200);
 	setRect(viewRect);
 
-//	wave = nullptr;
+	wave = nullptr;
 }
 
 bool PLUGIN_API GUI::open(void* parent, const PlatformType& platformType)
@@ -32,9 +32,9 @@ bool PLUGIN_API GUI::open(void* parent, const PlatformType& platformType)
 	frame->setBackground(cbmp); // フレームに背景画像を設定
 	cbmp->forget();	// フレームに設定後は背景画像はforgetで解放しておく
 
-	// CRect waveSize(10, 10, 120, 120);
-	// wave = new WaveView(waveSize, 2048);
-	// frame->addView(wave);
+	CRect waveSize(10, 10, 120, 120);
+	wave = new WaveView(waveSize, 2048);
+	frame->addView(wave);
  
 	// 作成したフレームを開く
 	frame->open(parent);
@@ -43,26 +43,23 @@ bool PLUGIN_API GUI::open(void* parent, const PlatformType& platformType)
 	return true;
 }
 
-/*
 CMessageResult GUI::notify(CBaseObject *sender, const char *message) {
 	if (message == CVSTGUITimer::kMsgTimer) {
 		if (wave != nullptr) {
-			// wave->update();
+			wave->update();
 		}
 	}
 
 	return VSTGUIEditor::notify(sender, message);
-}*/
+}
 
 void GUI::valueChanged(CControl*pControl) {
 	
 }
 
+
 void PLUGIN_API GUI::close() {
-	if (frame) {
-		frame->forget();
-		frame = nullptr;
-	}
+	frame->close();
 }
 
 }  // namespace Vst

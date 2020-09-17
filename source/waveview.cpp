@@ -18,13 +18,6 @@ void WaveView::draw(CDrawContext * context) {
 
 	setDirty(false);
 
-	this->context = context;
-
-	// this->update();
-}
-
-/*
-void WaveView::update() {
 	const auto width = getWidth();
 	const auto height = getHeight();
 	const double borderWidth = 2.0;
@@ -44,9 +37,13 @@ void WaveView::update() {
 	context->drawPolygon(points);
 	
 	context->drawRect(CRect(halfBorderWidth, halfBorderWidth, width, height), kDrawStroked);
+}
 
+
+void WaveView::update() {
 	offset++;
-}*/
+	invalid();
+}
 
 }  // namespace HelloWorld
 }  // namespace Steinberg

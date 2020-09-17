@@ -18,7 +18,7 @@ class WaveView : public CControl {
 
 	double* buffer;
 
-	// void update();
+	void update();
 
     protected:
 	CLineStyle lineStyle{CLineStyle::kLineCapRound, CLineStyle::kLineJoinRound};

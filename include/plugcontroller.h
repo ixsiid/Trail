@@ -62,7 +62,7 @@ public:
 	//---from EditController-----
 	tresult PLUGIN_API setComponentState (IBStream* state) SMTG_OVERRIDE;
 
-//	IPlugView * PLUGIN_API createView(FIDString name);
+	IPlugView * PLUGIN_API createView(FIDString name);
 };
 
 //------------------------------------------------------------------------

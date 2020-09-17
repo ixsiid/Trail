@@ -9,24 +9,18 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "platformio-debug",
-            "request": "launch",
-            "name": "PIO Debug",
-            "executable": "c:/Users/tal/Documents/PlatformIO/Projects/ili9340/.pio/build/m5stack-core-esp32/firmware.elf",
-            "toolchainBinDir": "C:/Users/tal/.platformio/packages/toolchain-xtensa32/bin",
-            "preLaunchTask": {
-                "type": "PlatformIO",
-                "task": "Pre-Debug"
-            },
-            "internalConsoleOptions": "openOnSessionStart"
-        },
-        {
-            "type": "platformio-debug",
-            "request": "launch",
-            "name": "PIO Debug (skip Pre-Debug)",
-            "executable": "c:/Users/tal/Documents/PlatformIO/Projects/ili9340/.pio/build/m5stack-core-esp32/firmware.elf",
-            "toolchainBinDir": "C:/Users/tal/.platformio/packages/toolchain-xtensa32/bin",
-            "internalConsoleOptions": "openOnSessionStart"
+            "type": "cppdbg",
+            "request": "attach",
+            "name": "REAPER",
+            "program": "C:/Program Files/REAPER (x64)/reaper.exe",
+            "processId":"${command:pickProcess}",
+            "MIMode": "gdb",
+            "miDebuggerPath": "/usr/bin/gdb",
+            "targetArchitecture": "x64",
+            "logging": {
+                "trace": true,
+                "traceResponse": true
+            }
         }
     ]
 }

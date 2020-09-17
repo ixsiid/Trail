@@ -42,7 +42,7 @@
 
 #include <pluginterfaces/base/fplatform.h>
 
-// #include "../include/gui.h"
+#include "../include/gui.h"
 
 namespace Steinberg {
 namespace HelloWorld {
@@ -97,7 +97,7 @@ tresult PLUGIN_API PlugController::setComponentState (IBStream* state)
 	return kResultOk;
 }
 
-/*
+
 IPlugView * PLUGIN_API PlugController::createView(FIDString name) {
 //	if (strcmp(name, Vst::ViewType::kEditor) == 0) {
 //		return new VSTGUI::VST3Editor(this, "view", "myEditor.uidesc");
@@ -108,9 +108,8 @@ IPlugView * PLUGIN_API PlugController::createView(FIDString name) {
 		return view;
 	}
 
-	return 0;
+	return nullptr;
 }
-*/
 
 //------------------------------------------------------------------------
 } // namespace
