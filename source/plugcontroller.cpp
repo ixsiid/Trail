@@ -64,6 +64,8 @@ tresult PLUGIN_API PlugController::initialize (FUnknown* context)
 		parameters.addParameter (STR16 ("Parameter 2"), STR16 ("On/Off"), 1, 1.,
 		                         Vst::ParameterInfo::kCanAutomate, HelloWorldParams::kParamOnId, 0,
 		                         STR16 ("Param2"));
+
+		parameters.addParameter (STR16("F0"), STR16("[0, 127]"), 0, 0.5, Vst::ParameterInfo::kCanAutomate, HelloWorldParams::kParamF0, 0, STR16("F0"));
 	}
 	return kResultTrue;
 }

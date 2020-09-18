@@ -45,7 +45,9 @@ enum HelloWorldParams : Vst::ParamID
 	kBypassId = 100,
 
 	kParamVolId = 102,
-	kParamOnId = 1000
+	kParamOnId = 1000,
+
+	kParamF0 = 2000
 };
 
 

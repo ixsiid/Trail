@@ -38,9 +38,10 @@
 
 #include "../include/gui.h"
 #include "../include/plugids.h"
-#include "base/source/fstreamer.h"
-#include "pluginterfaces/base/ibstream.h"
-#include "pluginterfaces/vst/ivstparameterchanges.h"
+#include <base/source/fstreamer.h>
+#include <pluginterfaces/base/ibstream.h>
+#include <pluginterfaces/vst/ivstparameterchanges.h>
+#include <pluginterfaces/vst/ivstevents.h>
 
 #include "../include/waveview.h"
 #include "../include/dft.h"
@@ -78,6 +79,8 @@ tresult PLUGIN_API PlugProcessor::initialize(FUnknown* context) {
 	// we want a stereo Input and a Stereo Output
 	addAudioInput(STR16("AudioInput"), Vst::SpeakerArr::kStereo);
 	addAudioOutput(STR16("AudioOutput"), Vst::SpeakerArr::kStereo);
+
+	addEventOutput(STR16("MIDI Out"), 1);
 
 	return kResultTrue;
 }
@@ -162,12 +165,32 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData& data) {
 
 		size_t size = sizeof(Vst::Sample32) * data.numSamples;
 
+		memcpy(data.outputs[bus].channelBuffers32[ch], data.inputs[bus].channelBuffers32[ch], size);
+
 		memcpy(buffer + index, data.inputs[bus].channelBuffers32[ch], size);
 		memcpy(buffer + index + Static::num, data.inputs[bus].channelBuffers32[ch], size);
 		index	= (index + data.numSamples) & (Static::num - 1);
 		Static::dft->process(buffer + index);
 
-		memcpy(data.outputs[bus].channelBuffers32[ch], buffer + index, size);
+		Vst::Event event = {0};
+		event.busIndex = 0;
+		event.sampleOffset = 0;
+		event.flags = 1;
+		event.type = Vst::Event::kLegacyMIDICCOutEvent;
+		event.midiCCOut.channel = 0;
+		event.midiCCOut.controlNumber = 8;
+		event.midiCCOut.value = _paramF0;
+		event.midiCCOut.value2 = 0;
+
+		_paramF0 = (_paramF0 + 1) & 0x7f;
+
+		int32 paramIndex = 0;
+		int32 queueIndex = 0;
+
+		data.outputEvents->addEvent(event);
+		data.outputParameterChanges
+			->addParameterData(HelloWorldParams::kParamF0, paramIndex)
+			->addPoint(0, _paramF0, queueIndex);
 
 		// Process Algorithm
 		// Ex: algo.process (data.inputs[0].channelBuffers32, data.outputs[0].channelBuffers32,

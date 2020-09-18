@@ -71,6 +71,10 @@ protected:
 	int16 mParam2 = 0;
 	bool mBypass = false;
 
+	int8 _paramF0 = 64;
+	double paramF0 = 0.5;
+	static const int32 paramF0Id = 100;
+
 	private:
 	float * buffer;
 	int index;
