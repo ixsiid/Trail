@@ -36,15 +36,15 @@
 
 #include "../include/plugprocessor.h"
 
-#include "../include/gui.h"
-#include "../include/plugids.h"
 #include <base/source/fstreamer.h>
 #include <pluginterfaces/base/ibstream.h>
-#include <pluginterfaces/vst/ivstparameterchanges.h>
 #include <pluginterfaces/vst/ivstevents.h>
+#include <pluginterfaces/vst/ivstparameterchanges.h>
 
-#include "../include/waveview.h"
 #include "../include/dft.h"
+#include "../include/gui.h"
+#include "../include/plugids.h"
+#include "../include/waveview.h"
 
 namespace Steinberg {
 namespace HelloWorld {
@@ -53,32 +53,30 @@ namespace HelloWorld {
 PlugProcessor::PlugProcessor() {
 	// register its editor class
 	setControllerClass(MyControllerUID);
-	
-	int bufferSize = Static::num * 2 + 4096;
-	buffer = new float[bufferSize];
-	for(int i=0; i<bufferSize; i++) buffer[i] = 0;
-	index  = 0;
 
-	Static::dft = new DFT();
-	if (Static::wave) Static::wave->setBuffer(Static::dft->spectrum);
+	int bufferSize = DFT::num * 2 + 4096;
+
+	buffer = new float[bufferSize];
+	for (int i = 0; i < bufferSize; i++) buffer[i] = 0;
+	index = 0;
+
+	DFT::initialize();
 }
 
 PlugProcessor::~PlugProcessor() {
 	delete[] buffer;
-	delete Static::dft;
 }
 
 //-----------------------------------------------------------------------------
 tresult PLUGIN_API PlugProcessor::initialize(FUnknown* context) {
 	//---always initialize the parent-------
 	tresult result = AudioEffect::initialize(context);
-	if (result != kResultTrue)
-		return kResultFalse;
+	if (result != kResultTrue) return kResultFalse;
 
 	//---create Audio In/Out busses------
 	// we want a stereo Input and a Stereo Output
-	addAudioInput(STR16("AudioInput"), Vst::SpeakerArr::kStereo);
-	addAudioOutput(STR16("AudioOutput"), Vst::SpeakerArr::kStereo);
+	addAudioInput(STR16("AudioInput"), Vst::SpeakerArr::kMono);
+	addAudioOutput(STR16("AudioOutput"), Vst::SpeakerArr::kMono);
 
 	addEventOutput(STR16("MIDI Out"), 1);
 
@@ -168,19 +166,19 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData& data) {
 		memcpy(data.outputs[bus].channelBuffers32[ch], data.inputs[bus].channelBuffers32[ch], size);
 
 		memcpy(buffer + index, data.inputs[bus].channelBuffers32[ch], size);
-		memcpy(buffer + index + Static::num, data.inputs[bus].channelBuffers32[ch], size);
-		index	= (index + data.numSamples) & (Static::num - 1);
-		Static::dft->process(buffer + index);
+		memcpy(buffer + index + DFT::num, data.inputs[bus].channelBuffers32[ch], size);
+		index = (index + data.numSamples) & (DFT::num - 1);
+		DFT::process(buffer + index);
 
-		Vst::Event event = {0};
-		event.busIndex = 0;
-		event.sampleOffset = 0;
-		event.flags = 1;
-		event.type = Vst::Event::kLegacyMIDICCOutEvent;
-		event.midiCCOut.channel = 0;
+		Vst::Event event			= {0};
+		event.busIndex				= 0;
+		event.sampleOffset			= 0;
+		event.flags				= 1;
+		event.type				= Vst::Event::kLegacyMIDICCOutEvent;
+		event.midiCCOut.channel		= 0;
 		event.midiCCOut.controlNumber = 8;
-		event.midiCCOut.value = _paramF0;
-		event.midiCCOut.value2 = 0;
+		event.midiCCOut.value		= _paramF0;
+		event.midiCCOut.value2		= 0;
 
 		_paramF0 = (_paramF0 + 1) & 0x7f;
 
@@ -189,8 +187,8 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData& data) {
 
 		data.outputEvents->addEvent(event);
 		data.outputParameterChanges
-			->addParameterData(HelloWorldParams::kParamF0, paramIndex)
-			->addPoint(0, _paramF0, queueIndex);
+		    ->addParameterData(HelloWorldParams::kParamF0, paramIndex)
+		    ->addPoint(0, _paramF0, queueIndex);
 
 		// Process Algorithm
 		// Ex: algo.process (data.inputs[0].channelBuffers32, data.outputs[0].channelBuffers32,

@@ -7,13 +7,12 @@ set(plug_sources
     source/plugcontroller.cpp
     source/plugprocessor.cpp
 
-    include/static.h
-    source/static.cpp
-
     include/gui.h
     source/gui.cpp
     include/waveview.h
     source/waveview.cpp
+    include/projection.h
+    source/projection.cpp
 
     include/dft.h
     source/dft.cpp

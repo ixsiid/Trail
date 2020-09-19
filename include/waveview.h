@@ -3,8 +3,6 @@
 #include <pluginterfaces/vst/ivstplugview.h>
 #include <public.sdk/source/vst/vstguieditor.h>
 
-#include "static.h"
-
 namespace Steinberg {
 namespace HelloWorld {
 
@@ -20,16 +18,11 @@ class WaveView : public CControl {
 
 	void update();
 
-	void setBuffer(float * buffer);
-
     protected:
 	CLineStyle lineStyle{CLineStyle::kLineCapRound, CLineStyle::kLineJoinRound};
 	CDrawContext::PointList points;
 
     private:
-	int t;
-
-	float * buffer;
 	float k, p;
 };
 

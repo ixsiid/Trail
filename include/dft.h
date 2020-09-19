@@ -7,16 +7,26 @@ namespace HelloWorld {
 
 class DFT {
     public:
-	DFT();
-	~DFT();
+	static const int num = 8192;
 
-	void process(float* source);
-	float* spectrum;
+	static void initialize();
+	static void destroy();
+
+	static void process(float* source);
+	static float* spectrum;
+	static float* fpeak;
+
+	static double f0;
+	static float lowFreqWeight;
 
     private:
-	float* _p;
-	float* re;
-	float* im;
+     static bool initialized;
+	static float* re;
+	static float* im;
+
+	static int* index;
+	static float* w_re;
+	static float* w_im;
 };
 
 }  // namespace HelloWorld

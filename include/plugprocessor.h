@@ -37,7 +37,6 @@
 #pragma once
 
 #include "public.sdk/source/vst/vstaudioeffect.h"
-#include "static.h"
 
 namespace Steinberg {
 namespace HelloWorld {

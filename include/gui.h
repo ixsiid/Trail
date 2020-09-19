@@ -3,6 +3,9 @@
 #include <pluginterfaces/vst/ivstplugview.h>
 #include <public.sdk/source/vst/vstguieditor.h>
 
+#include "waveview.h"
+#include "projection.h"
+
 namespace Steinberg {
 namespace HelloWorld {
 
@@ -24,7 +27,8 @@ class GUI : public Vst::VSTGUIEditor , public IControlListener {
 	DELEGATE_REFCOUNT(VSTGUIEditor);
 
     private:
-	CControl* createWaveView(int x, int y);
+	WaveView * wave;
+	Projection * projection;
 };
 
 }  // namespace HelloWorld
