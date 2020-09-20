@@ -8,8 +8,8 @@ namespace HelloWorld {
 using namespace VSTGUI;
 
 WaveView::WaveView(const CRect& rect) : CControl(rect) {
-	this->k = -16.0;
-	this->p = 320.0;
+	this->k = -8.0;
+	this->p = 160.0;
 
 	points.resize(256);
 }
@@ -28,19 +28,19 @@ void WaveView::draw(CDrawContext* context) {
 	context->setFrameColor(CColor(19, 193, 54, 255));
 
 	for (size_t x = 0; x < 256; ++x)
-		points[x] = CPoint(DFT::spectrum[x] * k + p, (CCoord)x * 2);
+		points[x] = CPoint(x * 2, DFT::spectrum[x] * k + p);
 
 	context->drawPolygon(points);
 
 	context->setFrameColor(CColor(193, 19, 54, 255));
 	for (size_t x = 0; x < 256; ++x)
-		points[x] = CPoint(DFT::fpeak[x] * k + p, (CCoord)x * 2);
+		points[x] = CPoint(x * 2, DFT::fpeak[x] * k + p);
 
 	context->drawPolygon(points);
 
 	context->setFrameColor(CColor(19, 19, 254, 255));
-	CPoint s = {0.0, DFT::f0 * 2.0};
-	CPoint f = {512.0, DFT::f0 * 2.0};
+	CPoint s = {DFT::f0 * 2.0, 0.0};
+	CPoint f = {DFT::f0 * 2.0, 10 + 256 + 80256};
 	context->drawLine(s, f);
 
 	context->setFrameColor(CColor(193, 193, 254, 255));

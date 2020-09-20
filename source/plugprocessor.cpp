@@ -61,6 +61,7 @@ PlugProcessor::PlugProcessor() {
 	index = 0;
 
 	DFT::initialize();
+	aaa = -20;
 }
 
 PlugProcessor::~PlugProcessor() {
@@ -105,6 +106,10 @@ tresult PLUGIN_API PlugProcessor::setupProcessing(Vst::ProcessSetup& setup) {
 //-----------------------------------------------------------------------------
 tresult PLUGIN_API PlugProcessor::setActive(TBool state) {
 	if (state) {  // Initialize
+		Vst::IMessage * message = allocateMessage();
+		message->setMessageID(u8"DFT BUFFER");
+		message->getAttributes()->setInt(u8"AAA", (int64)&aaa);
+		sendMessage(message);
 
 		// Allocate Memory Here
 		// Ex: algo.create ();

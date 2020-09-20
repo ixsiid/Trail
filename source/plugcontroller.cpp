@@ -106,11 +106,26 @@ IPlugView * PLUGIN_API PlugController::createView(FIDString name) {
 //	}
 
 	if (strcmp(name, "editor") == 0) {
-		GUI* view = new GUI(this);
+		GUI* view = new GUI(this, value);
+		//wave->k = value;
 		return view;
 	}
 
 	return nullptr;
+}
+
+tresult PlugController::notify(Vst::IMessage * message) {
+	if (strcmp(message->getMessageID(), u8"DFT BUFFER") == 0) {
+		int64 p;
+		tresult r = message->getAttributes()->getInt(u8"AAA", p);
+		if (r == kResultOk) {
+			value = *(int *)p;
+			//if (wave) wave->k = value;
+			return kResultOk;
+		}
+	}
+
+	return ComponentBase::notify(message);
 }
 
 //------------------------------------------------------------------------

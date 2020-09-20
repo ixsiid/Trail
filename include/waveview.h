@@ -18,12 +18,14 @@ class WaveView : public CControl {
 
 	void update();
 
+	float k;
+
     protected:
 	CLineStyle lineStyle{CLineStyle::kLineCapRound, CLineStyle::kLineJoinRound};
 	CDrawContext::PointList points;
 
     private:
-	float k, p;
+	float p;
 };
 
 }  // namespace HelloWorld

@@ -15,7 +15,7 @@ float* DFT::spectrum = nullptr;
 float* DFT::fpeak	 = nullptr;
 
 double DFT::f0 = 0.0;
-float DFT::lowFreqWeight = 3.0f;
+float DFT::lowFreqWeight = 5.0f;
 
 void DFT::initialize() {
 	if (initialized) return;

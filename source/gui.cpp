@@ -6,11 +6,13 @@
 namespace Steinberg {
 namespace HelloWorld {
 
-GUI::GUI(void* controller) : VSTGUIEditor(controller) {
-	ViewRect viewRect(0, 0, 1200, 600);
+GUI::GUI(void* controller, int value) : VSTGUIEditor(controller) {
+	ViewRect viewRect(0, 0, 600, 900);
 	setRect(viewRect);
 
 	wave = nullptr;
+	projection = nullptr;
+	this->value = value;
 }
 
 bool PLUGIN_API GUI::open(void* parent, const PlatformType& platformType) {
@@ -22,7 +24,7 @@ bool PLUGIN_API GUI::open(void* parent, const PlatformType& platformType) {
 	if (frame) return false;
 
 	// 作成するフレームのサイズを設定
-	CRect size(0, 0, 1200, 600);
+	CRect size(0, 0, 600, 900);
 
 	// フレームを作成。作成に失敗したら(NULLなら)終了。
 	// 引数には、フレームサイズ、自作GUIクラスのポインタを指定する
@@ -34,11 +36,12 @@ bool PLUGIN_API GUI::open(void* parent, const PlatformType& platformType) {
 	frame->setBackground(cbmp);				   // フレームに背景画像を設定
 	cbmp->forget();						   // フレームに設定後は背景画像はforgetで解放しておく
 
-	CRect waveSize(40, 10, 40 + 512, 10 + 512);
+	CRect waveSize(40, 10, 40 + 512, 10 + 256);
 	wave = new WaveView(waveSize);
 	frame->addView(wave);
+	wave->k = value;
 
-	CRect projectionSize(40 + 512 + 20, 10, 40 + 512 + 20 + 512, 10 + 512);
+	CRect projectionSize(40, 10 + 256 + 80, 40 + 512, 10 + 256 + 80 + 512);
 	projection = new Projection(projectionSize);
 	frame->addView(projection);
 
@@ -53,7 +56,7 @@ CMessageResult GUI::notify(CBaseObject* sender, const char* message) {
 	if (message == CVSTGUITimer::kMsgTimer) {
 		if (wave != nullptr) {
 			wave->update();
-			
+			projection->update();
 		}
 	}
 
@@ -65,7 +68,6 @@ void GUI::valueChanged(CControl* pControl) {
 
 void PLUGIN_API GUI::close() {
 	frame->forget();
-	//frame->close();
 }
 
 }  // namespace HelloWorld

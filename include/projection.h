@@ -8,7 +8,7 @@ namespace HelloWorld {
 
 using namespace VSTGUI;
 
-class Projection : public CControl, public IViewMouseListener {
+class Projection : public CControl{
     public:
 	Projection(const CRect& rect);
 
@@ -16,25 +16,29 @@ class Projection : public CControl, public IViewMouseListener {
 
 	void update();
 
-	CMouseEventResult viewOnMouseDown(CView* view, CPoint pos, CButtonState buttons) override;
-	CMouseEventResult viewOnMouseUp(CView* view, CPoint pos, CButtonState buttons) override;
-	CMouseEventResult viewOnMouseMoved(CView* view, CPoint pos, CButtonState buttons) override;
-	CMouseEventResult viewOnMouseCancel(CView* view) override;
-	void viewOnMouseEntered (CView* view) override;
-	void viewOnMouseExited (CView* view) override;
-	void viewOnMouseEnabled (CView* view, bool state) override;
+	CMouseEventResult onMouseDown (CPoint& where, const CButtonState& buttons) override;
+	CMouseEventResult onMouseUp (CPoint& where, const CButtonState& buttons) override;
+	CMouseEventResult onMouseMoved (CPoint& where, const CButtonState& buttons) override;
+//	CMouseEventResult onMouseCancel () override;
+
+	CMouseEventResult onMouseEntered (CPoint& where, const CButtonState& buttons) override;
+	CMouseEventResult onMouseExited (CPoint& where, const CButtonState& buttons) override;
+
+	
 
 	CLASS_METHODS(Projection, CControl);
 
-    protected:
-
     private:
+	CCoord top, left;
+	CPoint m;
 	CLineStyle lineStyle{CLineStyle::kLineCapRound, CLineStyle::kLineJoinRound};
 	CDrawContext::PointList points;
-	CPoint * _points;
+	CPoint* _points;
 	int count;
 	int active;
 	void sortPoints();
+	bool showMousePointer;
+	bool drag;
 };
 
 }  // namespace HelloWorld

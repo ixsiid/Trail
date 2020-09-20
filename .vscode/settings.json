@@ -57,6 +57,9 @@
 		"cinttypes": "cpp",
 		"typeinfo": "cpp",
 		"*.ipp": "cpp",
-		"complex": "cpp"
+		"complex": "cpp",
+		"xutility": "cpp",
+		"xlocmon": "cpp",
+		"xtr1common": "cpp"
 	}
 }
