@@ -125,10 +125,10 @@ void Projection::draw(CDrawContext* context) {
 		context->drawEllipse(CRect(m.x - 3, m.y - 3, m.x + 3, m.y + 3), CDrawStyle::kDrawFilled);
 	}
 
-	context->setFrameColor(CColor(19, 19, 254, 255));
-	CPoint s = {DFT::f0 * 2.0, 0.0};
-	CPoint f = {DFT::f0 * 2.0, 512.0};
-	context->drawLine(s, f);
+//	context->setFrameColor(CColor(19, 19, 254, 255));
+//	CPoint s = {DFT::f0 * 2.0, 0.0};
+//	CPoint f = {DFT::f0 * 2.0, 512.0};
+//	context->drawLine(s, f);
 
 	context->setFrameColor(CColor(193, 193, 254, 255));
 	context->drawRect(CRect(halfBorderWidth, halfBorderWidth, width, height), kDrawStroked);

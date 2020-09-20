@@ -39,8 +39,7 @@
 #include <public.sdk/source/vst/vsteditcontroller.h>
 #include <vstgui/plugin-bindings/vst3editor.h>
 
-#include "projection.h"
-#include "waveview.h"
+#include "dft.h"
 
 namespace Steinberg {
 namespace HelloWorld {
@@ -67,9 +66,10 @@ class PlugController : public Vst::EditController {
 	tresult notify(Vst::IMessage* message) override;
 
     private:
-	int value = -8;
+	DFT * dft;
 };
 
 //------------------------------------------------------------------------
 }  // namespace HelloWorld
 }  // namespace Steinberg
+

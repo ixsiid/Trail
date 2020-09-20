@@ -54,18 +54,13 @@ PlugProcessor::PlugProcessor() {
 	// register its editor class
 	setControllerClass(MyControllerUID);
 
-	int bufferSize = DFT::num * 2 + 4096;
+	int bufferSize = dftnum * 2 + 4096;
 
 	buffer = new float[bufferSize];
 	for (int i = 0; i < bufferSize; i++) buffer[i] = 0;
 	index = 0;
 
-	DFT::initialize();
-	aaa = -20;
-}
-
-PlugProcessor::~PlugProcessor() {
-	delete[] buffer;
+	dft = new DFT(dftnum);
 }
 
 //-----------------------------------------------------------------------------
@@ -106,17 +101,34 @@ tresult PLUGIN_API PlugProcessor::setupProcessing(Vst::ProcessSetup& setup) {
 //-----------------------------------------------------------------------------
 tresult PLUGIN_API PlugProcessor::setActive(TBool state) {
 	if (state) {  // Initialize
-		Vst::IMessage * message = allocateMessage();
-		message->setMessageID(u8"DFT BUFFER");
-		message->getAttributes()->setInt(u8"AAA", (int64)&aaa);
-		sendMessage(message);
-
 		// Allocate Memory Here
-		// Ex: algo.create ();
-	} else {	// Release
 
+		// ReaperではsetActiveの前にprocessが呼ばれるため、ココでの初期化は不適
+		if (!buffer) {
+			int bufferSize = dftnum * 2 + 4096;
+
+			buffer = new float[bufferSize];
+			for (int i = 0; i < bufferSize; i++) buffer[i] = 0;
+			index = 0;
+		}
+
+		if (!dft) dft = new DFT(dftnum);
+
+		Vst::IMessage* message = allocateMessage();
+		message->setMessageID(u8"DFT BUFFER");
+		message->getAttributes()->setInt(u8"ADDRESS", (int64)dft);
+		sendMessage(message);
+	} else {	// Release
 		// Free Memory if still allocated
-		// Ex: if(algo.isCreated ()) { algo.destroy (); }
+
+		if (buffer) {
+			delete[] buffer;
+			buffer = nullptr;
+		}
+		if (dft) {
+			delete dft;
+			dft = nullptr;
+		}
 	}
 
 	return AudioEffect::setActive(state);
@@ -171,9 +183,10 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData& data) {
 		memcpy(data.outputs[bus].channelBuffers32[ch], data.inputs[bus].channelBuffers32[ch], size);
 
 		memcpy(buffer + index, data.inputs[bus].channelBuffers32[ch], size);
-		memcpy(buffer + index + DFT::num, data.inputs[bus].channelBuffers32[ch], size);
-		index = (index + data.numSamples) & (DFT::num - 1);
-		DFT::process(buffer + index);
+		memcpy(buffer + index + dftnum, data.inputs[bus].channelBuffers32[ch], size);
+		index = (index + data.numSamples) & (dftnum - 1);
+
+		dft->process(buffer + index);
 
 		Vst::Event event			= {0};
 		event.busIndex				= 0;
@@ -194,10 +207,6 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData& data) {
 		data.outputParameterChanges
 		    ->addParameterData(HelloWorldParams::kParamF0, paramIndex)
 		    ->addPoint(0, _paramF0, queueIndex);
-
-		// Process Algorithm
-		// Ex: algo.process (data.inputs[0].channelBuffers32, data.outputs[0].channelBuffers32,
-		// data.numSamples);
 	}
 	return kResultOk;
 }

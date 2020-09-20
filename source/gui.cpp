@@ -6,13 +6,13 @@
 namespace Steinberg {
 namespace HelloWorld {
 
-GUI::GUI(void* controller, int value) : VSTGUIEditor(controller) {
+GUI::GUI(void* controller, DFT * dft) : VSTGUIEditor(controller) {
 	ViewRect viewRect(0, 0, 600, 900);
 	setRect(viewRect);
 
 	wave = nullptr;
 	projection = nullptr;
-	this->value = value;
+	this->dft = dft;
 }
 
 bool PLUGIN_API GUI::open(void* parent, const PlatformType& platformType) {
@@ -37,9 +37,8 @@ bool PLUGIN_API GUI::open(void* parent, const PlatformType& platformType) {
 	cbmp->forget();						   // フレームに設定後は背景画像はforgetで解放しておく
 
 	CRect waveSize(40, 10, 40 + 512, 10 + 256);
-	wave = new WaveView(waveSize);
+	wave = new WaveView(waveSize, dft);
 	frame->addView(wave);
-	wave->k = value;
 
 	CRect projectionSize(40, 10 + 256 + 80, 40 + 512, 10 + 256 + 80 + 512);
 	projection = new Projection(projectionSize);

@@ -3,23 +3,12 @@
 namespace Steinberg {
 namespace HelloWorld {
 
-bool DFT::initialized = false;
-float* DFT::re		  = nullptr;
-float* DFT::im		  = nullptr;
+DFT::DFT(int num) {
+	this->num = num;
 
-int* DFT::index  = nullptr;
-float* DFT::w_re = nullptr;
-float* DFT::w_im = nullptr;
+	f0		    = 0.0;
+	lowFreqWeight = 12.0f;
 
-float* DFT::spectrum = nullptr;
-float* DFT::fpeak	 = nullptr;
-
-double DFT::f0 = 0.0;
-float DFT::lowFreqWeight = 5.0f;
-
-void DFT::initialize() {
-	if (initialized) return;
-	initialized = true;
 	// 110 ~ 1760 Hzの間を対象とする
 
 	// 周波数分解能からアプローチ
@@ -88,7 +77,7 @@ void DFT::initialize() {
 	}
 }
 
-void DFT::destroy() {
+DFT::~DFT() {
 	delete[] re;
 	delete[] im;
 	delete[] spectrum;
@@ -96,8 +85,6 @@ void DFT::destroy() {
 	delete[] index;
 	delete[] w_re;
 	delete[] w_im;
-
-	initialized = false;
 }
 
 void DFT::process(float* source) {
@@ -134,44 +121,21 @@ void DFT::process(float* source) {
 
 	// 1 - 256 で 0(DC) - 1389.312Hz (44100), 1512.183Hz (44800)
 	for (int i = 1; i <= 256; i++) {
-		int k = index[i];
+		int k   = index[i];
 		float p = re[k] * re[k] + im[k] * im[k];
 
 		spectrum[i - 1] = logf(p * i);
-		fpeak[i - 1] = spectrum[i - 1] / pow(i, lowFreqWeight);
+		fpeak[i - 1]	 = spectrum[i - 1] / pow(i, lowFreqWeight);
 	}
 
-	f0 = 0;
+	f0	    = 0;
 	float pv = fpeak[0];
-	for(int i=1; i<256; i++) {
+	for (int i = 1; i < 256; i++) {
 		if (pv < fpeak[i]) {
 			f0 = i;
 			pv = fpeak[i];
 		}
 	}
-
-	/*
-	// keyword: εフィルタ, 平均値フィルタ
-	// 移動平均してみる
-	const int n = 7;
-	const int lf = 256 - 7;
-	float fil[lf];
-	for (int i=0; i<lf; i++) {
-		fil[i] = 0;
-		for(int j=0; j<n; j++) fil[i] += spectrum[i + j];
-	}
-
-	const int l1 = lf - 1;
-	float p1[l1];
-	for(int i=0; i<l1; i++) p1[i] = fil[i + 1] - fil[i]; 
-	const int l2 = l1 - 1;
-	float p2[l2];
-	for(int i=0; i<l2; i++) p2[i] = p1[i+1] - p1[i];
-	
-	for(int i=0; i<l2 -1; i++) {
-		fpeak[i + 4] = (p2[i] > 0 && p2[i +1] < 0) ? (spectrum[i + 4] > -4.0f ? spectrum[i + 4] : -16) : -16;
-	}
-	*/
 }
 
 }  // namespace HelloWorld

@@ -36,7 +36,9 @@
 
 #pragma once
 
-#include "public.sdk/source/vst/vstaudioeffect.h"
+#include <public.sdk/source/vst/vstaudioeffect.h>
+
+#include "dft.h"
 
 namespace Steinberg {
 namespace HelloWorld {
@@ -45,7 +47,6 @@ namespace HelloWorld {
 class PlugProcessor : public Vst::AudioEffect {
     public:
 	PlugProcessor();
-	~PlugProcessor();
 
 	tresult PLUGIN_API initialize(FUnknown* context) SMTG_OVERRIDE;
 	tresult PLUGIN_API setBusArrangements(Vst::SpeakerArrangement* inputs, int32 numIns,
@@ -75,7 +76,9 @@ class PlugProcessor : public Vst::AudioEffect {
     private:
 	float* buffer;
 	int index;
-	int aaa;
+
+	const int dftnum = 8192;
+	DFT* dft;
 };
 
 //------------------------------------------------------------------------

@@ -3,6 +3,7 @@
 #include <pluginterfaces/vst/ivstplugview.h>
 #include <public.sdk/source/vst/vstguieditor.h>
 
+#include "dft.h"
 #include "projection.h"
 #include "waveview.h"
 
@@ -13,7 +14,7 @@ using namespace VSTGUI;
 
 class GUI : public Vst::VSTGUIEditor, public IControlListener {
     public:
-	GUI(void* controller, int value);
+	GUI(void* controller, DFT* dft);
 
 	// VSTGUIEditor
 	virtual bool PLUGIN_API open(void* parent, const PlatformType& PlatformType = kDefaultNative);
@@ -30,7 +31,7 @@ class GUI : public Vst::VSTGUIEditor, public IControlListener {
 	WaveView* wave;
 	Projection* projection;
 
-	int value;
+	DFT* dft;
 };
 
 }  // namespace HelloWorld

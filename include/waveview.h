@@ -3,6 +3,8 @@
 #include <pluginterfaces/vst/ivstplugview.h>
 #include <public.sdk/source/vst/vstguieditor.h>
 
+#include "dft.h"
+
 namespace Steinberg {
 namespace HelloWorld {
 
@@ -10,7 +12,7 @@ using namespace VSTGUI;
 
 class WaveView : public CControl {
     public:
-	WaveView(const CRect& rect);
+	WaveView(const CRect& rect, DFT * dft);
 
 	void draw(CDrawContext* context) override;
 
@@ -18,14 +20,13 @@ class WaveView : public CControl {
 
 	void update();
 
-	float k;
-
     protected:
 	CLineStyle lineStyle{CLineStyle::kLineCapRound, CLineStyle::kLineJoinRound};
 	CDrawContext::PointList points;
 
     private:
-	float p;
+	float k, p;
+	DFT * dft;
 };
 
 }  // namespace HelloWorld
