@@ -39,6 +39,7 @@
 #include <public.sdk/source/vst/vstaudioeffect.h>
 
 #include "dft.h"
+#include "projection.h"
 
 namespace Steinberg {
 namespace HelloWorld {
@@ -69,8 +70,6 @@ class PlugProcessor : public Vst::AudioEffect {
 	int16 mParam2		    = 0;
 	bool mBypass		    = false;
 
-	int8 _paramF0			    = 64;
-	double paramF0			    = 0.5;
 	static const int32 paramF0Id = 100;
 
     private:
@@ -79,6 +78,7 @@ class PlugProcessor : public Vst::AudioEffect {
 
 	const int dftnum = 8192;
 	DFT* dft;
+	Projection* proj;
 };
 
 //------------------------------------------------------------------------

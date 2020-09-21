@@ -7,7 +7,7 @@ DFT::DFT(int num) {
 	this->num = num;
 
 	f0		    = 0.0;
-	lowFreqWeight = 12.0f;
+	lowFreqWeight = 0.17f;
 
 	// 110 ~ 1760 Hzの間を対象とする
 
@@ -125,7 +125,7 @@ void DFT::process(float* source) {
 		float p = re[k] * re[k] + im[k] * im[k];
 
 		spectrum[i - 1] = logf(p * i);
-		fpeak[i - 1]	 = spectrum[i - 1] / pow(i, lowFreqWeight);
+		fpeak[i - 1]	 = spectrum[i - 1] - i * lowFreqWeight + 16.0;
 	}
 
 	f0	    = 0;

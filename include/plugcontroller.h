@@ -40,6 +40,7 @@
 #include <vstgui/plugin-bindings/vst3editor.h>
 
 #include "dft.h"
+#include "projection.h"
 
 namespace Steinberg {
 namespace HelloWorld {
@@ -67,6 +68,7 @@ class PlugController : public Vst::EditController {
 
     private:
 	DFT * dft;
+	Projection * proj;
 };
 
 //------------------------------------------------------------------------

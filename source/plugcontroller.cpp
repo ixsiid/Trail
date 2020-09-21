@@ -37,8 +37,8 @@
 #include "../include/plugcontroller.h"
 #include "../include/plugids.h"
 
-#include "base/source/fstreamer.h"
-#include "pluginterfaces/base/ibstream.h"
+#include <base/source/fstreamer.h>
+#include <pluginterfaces/base/ibstream.h>
 
 #include <pluginterfaces/base/fplatform.h>
 
@@ -101,12 +101,8 @@ tresult PLUGIN_API PlugController::setComponentState (IBStream* state)
 
 
 IPlugView * PLUGIN_API PlugController::createView(FIDString name) {
-//	if (strcmp(name, Vst::ViewType::kEditor) == 0) {
-//		return new VSTGUI::VST3Editor(this, "view", "myEditor.uidesc");
-//	}
-
 	if (strcmp(name, "editor") == 0) {
-		GUI* view = new GUI(this, dft);
+ 		GUI* view = new GUI(this, dft, proj);
 		return view;
 	}
 
@@ -114,11 +110,16 @@ IPlugView * PLUGIN_API PlugController::createView(FIDString name) {
 }
 
 tresult PlugController::notify(Vst::IMessage * message) {
-	if (strcmp(message->getMessageID(), u8"DFT BUFFER") == 0) {
+	if (strcmp(message->getMessageID(), u8"INITIALIZE") == 0) {
 		int64 p;
-		tresult r = message->getAttributes()->getInt(u8"ADDRESS", p);
+		tresult r = message->getAttributes()->getInt(u8"DFT", p);
 		if (r == kResultOk) {
 			dft = (DFT *)p;
+			return kResultOk;
+		}
+		r = message->getAttributes()->getInt(u8"PROJECTION", p);
+		if (r == kResultOk) {
+			proj = (Projection *)p;
 			return kResultOk;
 		}
 	}

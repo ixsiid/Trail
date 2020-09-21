@@ -1,18 +1,17 @@
 #include "../include/gui.h"
 
-#include "../include/dft.h"
-#include "../include/waveview.h"
-
 namespace Steinberg {
 namespace HelloWorld {
 
-GUI::GUI(void* controller, DFT * dft) : VSTGUIEditor(controller) {
+GUI::GUI(void* controller, DFT * dft, Projection * proj) : VSTGUIEditor(controller) {
 	ViewRect viewRect(0, 0, 600, 900);
 	setRect(viewRect);
 
-	wave = nullptr;
-	projection = nullptr;
 	this->dft = dft;
+	this->proj = proj;
+
+	this->wave = nullptr;
+	this->projection = nullptr;
 }
 
 bool PLUGIN_API GUI::open(void* parent, const PlatformType& platformType) {
@@ -41,7 +40,7 @@ bool PLUGIN_API GUI::open(void* parent, const PlatformType& platformType) {
 	frame->addView(wave);
 
 	CRect projectionSize(40, 10 + 256 + 80, 40 + 512, 10 + 256 + 80 + 512);
-	projection = new Projection(projectionSize);
+	projection = new ProjectionView(projectionSize, proj);
 	frame->addView(projection);
 
 	// 作成したフレームを開く
@@ -53,10 +52,8 @@ bool PLUGIN_API GUI::open(void* parent, const PlatformType& platformType) {
 
 CMessageResult GUI::notify(CBaseObject* sender, const char* message) {
 	if (message == CVSTGUITimer::kMsgTimer) {
-		if (wave != nullptr) {
-			wave->update();
-			projection->update();
-		}
+		if (wave ) wave->update();
+		if (projection) projection->update();
 	}
 
 	return VSTGUIEditor::notify(sender, message);

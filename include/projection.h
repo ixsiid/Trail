@@ -1,6 +1,6 @@
 #pragma once
 
-#include <pluginterfaces/vst/ivstplugview.h>
+#include <public.sdk/source/vst/vstaudioeffect.h>
 #include <public.sdk/source/vst/vstguieditor.h>
 
 namespace Steinberg {
@@ -8,37 +8,18 @@ namespace HelloWorld {
 
 using namespace VSTGUI;
 
-class Projection : public CControl{
+class Projection {
     public:
-	Projection(const CRect& rect);
+	Projection();
+	~Projection();
+	void setPointList(CDrawContext::PointList* points);
+	double evaluate(double input);
 
-	void draw(CDrawContext* context) override;
-
-	void update();
-
-	CMouseEventResult onMouseDown (CPoint& where, const CButtonState& buttons) override;
-	CMouseEventResult onMouseUp (CPoint& where, const CButtonState& buttons) override;
-	CMouseEventResult onMouseMoved (CPoint& where, const CButtonState& buttons) override;
-//	CMouseEventResult onMouseCancel () override;
-
-	CMouseEventResult onMouseEntered (CPoint& where, const CButtonState& buttons) override;
-	CMouseEventResult onMouseExited (CPoint& where, const CButtonState& buttons) override;
-
-	
-
-	CLASS_METHODS(Projection, CControl);
+	CPoint latest;
 
     private:
-	CCoord top, left;
-	CPoint m;
-	CLineStyle lineStyle{CLineStyle::kLineCapRound, CLineStyle::kLineJoinRound};
-	CDrawContext::PointList points;
-	CPoint* _points;
-	int count;
-	int active;
-	void sortPoints();
-	bool showMousePointer;
-	bool drag;
+	CPoint* points;
+	size_t count;
 };
 
 }  // namespace HelloWorld

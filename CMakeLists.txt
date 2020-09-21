@@ -11,11 +11,13 @@ set(plug_sources
     source/gui.cpp
     include/waveview.h
     source/waveview.cpp
-    include/projection.h
-    source/projection.cpp
+    include/projectionView.h
+    source/projectionView.cpp
 
     include/dft.h
     source/dft.cpp
+    include/projection.h
+    source/projection.cpp
 )
 
 if(SMTG_ADD_VSTGUI)

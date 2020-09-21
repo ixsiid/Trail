@@ -5,6 +5,8 @@
 
 #include "dft.h"
 #include "projection.h"
+
+#include "projectionView.h"
 #include "waveview.h"
 
 namespace Steinberg {
@@ -14,7 +16,7 @@ using namespace VSTGUI;
 
 class GUI : public Vst::VSTGUIEditor, public IControlListener {
     public:
-	GUI(void* controller, DFT* dft);
+	GUI(void* controller, DFT* dft, Projection * proj);
 
 	// VSTGUIEditor
 	virtual bool PLUGIN_API open(void* parent, const PlatformType& PlatformType = kDefaultNative);
@@ -29,9 +31,10 @@ class GUI : public Vst::VSTGUIEditor, public IControlListener {
 
     private:
 	WaveView* wave;
-	Projection* projection;
+	ProjectionView* projection;
 
 	DFT* dft;
+	Projection* proj;
 };
 
 }  // namespace HelloWorld

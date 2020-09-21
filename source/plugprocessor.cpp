@@ -60,7 +60,8 @@ PlugProcessor::PlugProcessor() {
 	for (int i = 0; i < bufferSize; i++) buffer[i] = 0;
 	index = 0;
 
-	dft = new DFT(dftnum);
+	dft	= new DFT(dftnum);
+	proj = new Projection();
 }
 
 //-----------------------------------------------------------------------------
@@ -113,11 +114,17 @@ tresult PLUGIN_API PlugProcessor::setActive(TBool state) {
 		}
 
 		if (!dft) dft = new DFT(dftnum);
+		if (!proj) proj = new Projection();
 
-		Vst::IMessage* message = allocateMessage();
-		message->setMessageID(u8"DFT BUFFER");
-		message->getAttributes()->setInt(u8"ADDRESS", (int64)dft);
-		sendMessage(message);
+		Vst::IMessage* messageA = allocateMessage();
+		messageA->setMessageID(u8"INITIALIZE");
+		messageA->getAttributes()->setInt(u8"DFT", (int64)dft);
+		sendMessage(messageA);
+
+		Vst::IMessage* messageB = allocateMessage();
+		messageB->setMessageID(u8"INITIALIZE");
+		messageB->getAttributes()->setInt(u8"PROJECTION", (int64)proj);
+		sendMessage(messageB);
 	} else {	// Release
 		// Free Memory if still allocated
 
@@ -128,6 +135,10 @@ tresult PLUGIN_API PlugProcessor::setActive(TBool state) {
 		if (dft) {
 			delete dft;
 			dft = nullptr;
+		}
+		if (proj) {
+			delete proj;
+			proj = nullptr;
 		}
 	}
 
@@ -180,13 +191,23 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData& data) {
 
 		size_t size = sizeof(Vst::Sample32) * data.numSamples;
 
+		// copy to output
 		memcpy(data.outputs[bus].channelBuffers32[ch], data.inputs[bus].channelBuffers32[ch], size);
 
+		// analyze f0
 		memcpy(buffer + index, data.inputs[bus].channelBuffers32[ch], size);
 		memcpy(buffer + index + dftnum, data.inputs[bus].channelBuffers32[ch], size);
 		index = (index + data.numSamples) & (dftnum - 1);
 
 		dft->process(buffer + index);
+		double value = proj->evaluate(dft->f0);
+
+		// output f0 signal
+		int intValue = value / 4;
+		if (intValue < 0)
+			intValue = 0;
+		else if (intValue > 127)
+			intValue = 127;
 
 		Vst::Event event			= {0};
 		event.busIndex				= 0;
@@ -194,11 +215,15 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData& data) {
 		event.flags				= 1;
 		event.type				= Vst::Event::kLegacyMIDICCOutEvent;
 		event.midiCCOut.channel		= 0;
-		event.midiCCOut.controlNumber = 8;
-		event.midiCCOut.value		= _paramF0;
+		event.midiCCOut.controlNumber = 18;
+		event.midiCCOut.value		= 127 - intValue;
 		event.midiCCOut.value2		= 0;
 
-		_paramF0 = (_paramF0 + 1) & 0x7f;
+		value /= 512.0;
+		if (value < 0.0)
+			value = 0.0;
+		else if (value > 1.0)
+			value = 1.0;
 
 		int32 paramIndex = 0;
 		int32 queueIndex = 0;
@@ -206,7 +231,7 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData& data) {
 		data.outputEvents->addEvent(event);
 		data.outputParameterChanges
 		    ->addParameterData(HelloWorldParams::kParamF0, paramIndex)
-		    ->addPoint(0, _paramF0, queueIndex);
+		    ->addPoint(0, 1.0 - value, queueIndex);
 	}
 	return kResultOk;
 }
