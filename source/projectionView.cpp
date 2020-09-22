@@ -139,12 +139,9 @@ void ProjectionView::draw(CDrawContext* context) {
 	context->setFrameColor(CColor(19, 19, 254, 255));
 	CPoint s = {proj->latest.x, 0.0};
 	CPoint c = {proj->latest.x, proj->latest.y};
-	CPoint f = {512.0, proj->latest.y};
+	CPoint f = {512.0 + 80, proj->latest.y};
 	context->drawLine(s, c);
 	context->drawLine(c, f);
-
-	context->setFrameColor(CColor(193, 193, 254, 255));
-	context->drawRect(CRect(halfBorderWidth, halfBorderWidth, width, height), kDrawStroked);
 
 	setDirty(false);
 }

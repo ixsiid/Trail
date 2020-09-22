@@ -124,6 +124,11 @@ tresult PLUGIN_API PlugProcessor::setActive(TBool state) {
 		messageB->setMessageID(u8"INITIALIZE");
 		messageB->getAttributes()->setInt(u8"PROJECTION", (int64)proj);
 		sendMessage(messageB);
+
+		Vst::IMessage* messageCC = allocateMessage();
+		messageCC->setMessageID(u8"INITIALIZE");
+		messageCC->getAttributes()->setInt(u8"MIDI CC", cc);
+		sendMessage(messageCC);
 	} else {	// Release
 		// Free Memory if still allocated
 
@@ -145,11 +150,10 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData& data) {
 				int32 sampleOffset;
 				int32 numPoints = paramQueue->getPointCount();
 				switch (paramQueue->getParameterId()) {
-					case HelloWorldParams::kCCUpId:
+					case HelloWorldParams::kCCId:
 						if (paramQueue->getPoint(numPoints - 1, sampleOffset, value) == kResultTrue) {
-							cc++;
+							cc = value * 119;
 						}
-						this->changed();
 						break;
 				}
 			}
@@ -223,20 +227,16 @@ tresult PLUGIN_API PlugProcessor::setState(IBStream* state) {
 	LOG("set state\n");
 
 	IBStreamer streamer(state, kLittleEndian);
-	LOG("0\n");
 
 	uint32 _v;
-	if (!streamer.readInt32u(_v)) {
-		LOG("1 fail\n");
-		return kResultFalse;
-	}
-	
-	LOG("1\n");
+	if (!streamer.readInt32u(_v)) return kResultFalse;
 	if (_v != version) return kResultFalse;
-	LOG("2\n");
 
 	if (!proj->load(&streamer)) return kResultFalse;
-	LOG("3\n");
+
+	int32 _cc;
+	if (!streamer.readInt32(_cc)) return kResultFalse;
+	cc = _cc;
 
 	return kResultOk;
 }
@@ -252,6 +252,8 @@ tresult PLUGIN_API PlugProcessor::getState(IBStream* state) {
 	streamer.writeInt32u(version);
 
 	proj->save(&streamer);
+
+	streamer.writeInt32(cc);
 
 	return kResultOk;
 }

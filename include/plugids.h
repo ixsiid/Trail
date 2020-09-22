@@ -45,8 +45,7 @@ enum HelloWorldParams : Vst::ParamID
 	kParamFp = 2001,
 	kParamF0 = 2000,
 
-	kCCUpId = 103,
-	kCCDownId = 104,
+	kCCId = 103,
 };
 
 

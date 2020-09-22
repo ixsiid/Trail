@@ -55,13 +55,18 @@ tresult PLUGIN_API PlugController::initialize (FUnknown* context)
 	if (result == kResultTrue)
 	{
 		//---Create Parameters------------
-		parameters.addParameter (STR16("CC Ch Up"), 0, 0, 0,
-							Vst::ParameterInfo::kCanAutomate, HelloWorldParams::kCCUpId, 0,
-							STR16("CcUp"));
+		parameters.addParameter (STR16("Midi CC out num"), 0, 0, 0,
+							Vst::ParameterInfo::kCanAutomate, HelloWorldParams::kCCId, 0,
+							STR16("MIDI CC"));
 
-		parameters.addParameter (STR16("F0"), STR16("[0, 127]"), 0, 0.5,
+		parameters.addParameter (STR16("F0"), STR16("Hz"), 0, 0.0,
 							Vst::ParameterInfo::kCanAutomate,
 							HelloWorldParams::kParamF0,
+							0, STR16("F0"));
+
+		parameters.addParameter (STR16("Fp"), STR16("[-1, 1]"), 0, 0.0,
+							Vst::ParameterInfo::kCanAutomate,
+							HelloWorldParams::kParamFp,
 							0, STR16("F0"));
 	}
 	return kResultTrue;
@@ -84,9 +89,6 @@ tresult PLUGIN_API PlugController::setComponentState (IBStream* state)
 IPlugView * PLUGIN_API PlugController::createView(FIDString name) {
 	if (strcmp(name, "editor") == 0) {
  		GUI* view = new GUI(this, dft, proj);
-
-
-		 this->changed(0);
 		return view;
 	}
 
@@ -104,6 +106,11 @@ tresult PlugController::notify(Vst::IMessage * message) {
 		r = message->getAttributes()->getInt(u8"PROJECTION", p);
 		if (r == kResultOk) {
 			proj = (Projection *)p;
+			return kResultOk;
+		}
+		r = message->getAttributes()->getInt(u8"MIDI CC", p);
+		if (r == kResultOk) {
+			this->setParamNormalized(kCCId, p / 119.0f);
 			return kResultOk;
 		}
 	}

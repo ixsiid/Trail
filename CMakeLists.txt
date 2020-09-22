@@ -16,6 +16,8 @@ set(plug_sources
     source/waveview.cpp
     include/projectionView.h
     source/projectionView.cpp
+    include/numericChangeView.h
+    source/numericChangeView.cpp
 
     include/dft.h
     source/dft.cpp

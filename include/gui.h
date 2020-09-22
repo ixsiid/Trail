@@ -5,6 +5,7 @@
 
 #include "dft.h"
 #include "projection.h"
+#include "numericChangeView.h"
 
 #include "projectionView.h"
 #include "waveview.h"
@@ -35,6 +36,7 @@ class GUI : public Vst::VSTGUIEditor, public IControlListener {
 
 	DFT* dft;
 	Projection* proj;
+	NumericChangeView * ccView;
 };
 
 }  // namespace HelloWorld

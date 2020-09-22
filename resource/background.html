@@ -56,6 +56,15 @@
 					line2.setAttribute('stroke', '#789');
 					spectrum.appendChild(line2);
 				}
+
+				const textF0 = document.createElementNS(ns, 'text');
+				textF0.textContent = 'F0';
+				textF0.setAttribute('x', sx + 3);
+				textF0.setAttribute('y', height + 10 + fontSize);
+				textF0.setAttribute('stroke', 'none');
+				textF0.setAttribute('fill', '#789');
+				textF0.setAttribute('font-size', fontSize);
+				spectrum.appendChild(textF0);
 			}
 
 			const py = 30;
@@ -110,7 +119,7 @@
 				const midicc1 = document.createElementNS(ns, 'text');
 				midicc1.textContent = 'MIDI';
 				midicc1.setAttribute('x', sx + width + 12);
-				midicc1.setAttribute('y', oy - 2 * (fontSize + 3));
+				midicc1.setAttribute('y', oy - 2 * (fontSize + 3) - 22);
 				midicc1.setAttribute('stroke', 'none');
 				midicc1.setAttribute('fill', '#000');
 				midicc1.setAttribute('font-size', fontSize * 1.15);
@@ -119,7 +128,7 @@
 				const midicc2 = document.createElementNS(ns, 'text');
 				midicc2.textContent = 'CC';
 				midicc2.setAttribute('x', sx + width + 22);
-				midicc2.setAttribute('y', oy - 1 * (fontSize + 3));
+				midicc2.setAttribute('y', oy - 1 * (fontSize + 3) - 22);
 				midicc2.setAttribute('stroke', 'none');
 				midicc2.setAttribute('fill', '#000');
 				midicc2.setAttribute('font-size', fontSize * 1.15);
@@ -147,28 +156,63 @@
 				projection.appendChild(param2);
 
 				for (let i = 0; i <= ny; i++) {
-					const text = document.createElementNS(ns, 'text');
 					const y = oy + i / ny * height;
 
+					const text = document.createElementNS(ns, 'text');
 					text.textContent = Math.ceil((ny - i) * 127 / ny);
-					text.setAttribute('x', sx + width + 12);
-					text.setAttribute('y', y);
+					text.setAttribute('x', sx + width + 16);
+					text.setAttribute('y', y + 14);
 					text.setAttribute('stroke', 'none');
 					text.setAttribute('fill', '#789');
 					text.setAttribute('font-size', fontSize);
 					projection.appendChild(text);
 
-					const text2 = document.createElementNS(ns, 'text');
+					const line = document.createElementNS(ns, 'line');
+					line.setAttribute('x1', sx + width + 12);
+					line.setAttribute('y1', y);
+					line.setAttribute('x2', sx + width + 32);
+					line.setAttribute('y2', y);
+					line.setAttribute('stroke', '#235');
+					line.setAttribute('stroke-width', '1.0');
+					projection.appendChild(line);
 
+					const text2 = document.createElementNS(ns, 'text');
 					text2.textContent = ((ny - i) / ny * 2 - 1).toFixed(3);
-					text2.setAttribute('x', sx + width + 120);
-					text2.setAttribute('y', y);
+					text2.setAttribute('x', sx + width + 124);
+					text2.setAttribute('y', y + 14);
 					text2.setAttribute('stroke', 'none');
 					text2.setAttribute('fill', '#789');
 					text2.setAttribute('font-size', fontSize);
 					text2.setAttribute('text-anchor', 'end');
 					projection.appendChild(text2);
+
+					const line2 = document.createElementNS(ns, 'line');
+					line2.setAttribute('x1', sx + width + 68);
+					line2.setAttribute('y1', y);
+					line2.setAttribute('x2', sx + width + 100);
+					line2.setAttribute('y2', y);
+					line2.setAttribute('stroke', '#235');
+					line2.setAttribute('stroke-width', '1.0');
+					projection.appendChild(line2);
 				}
+
+				const vline = document.createElementNS(ns, 'line');
+				vline.setAttribute('x1', sx + width + 12);
+				vline.setAttribute('y1', oy);
+				vline.setAttribute('x2', sx + width + 12);
+				vline.setAttribute('y2', oy + height);
+				vline.setAttribute('stroke', '#235');
+				vline.setAttribute('stroke-width', '1.0');
+				projection.appendChild(vline);
+
+				const vline2 = document.createElementNS(ns, 'line');
+				vline2.setAttribute('x1', sx + width + 68);
+				vline2.setAttribute('y1', oy);
+				vline2.setAttribute('x2', sx + width + 68);
+				vline2.setAttribute('y2', oy + height);
+				vline2.setAttribute('stroke', '#235');
+				vline2.setAttribute('stroke-width', '1.0');
+				projection.appendChild(vline2);
 
 			}
 

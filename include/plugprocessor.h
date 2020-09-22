@@ -70,7 +70,7 @@ class PlugProcessor : public Vst::AudioEffect {
 	float* buffer;
 	int index;
 
-	int cc = 18;
+	int cc = 0;
 
 	const int dftnum = 8192;
 	DFT* dft;

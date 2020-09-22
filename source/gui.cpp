@@ -1,17 +1,18 @@
 #include "../include/gui.h"
+
 #include "../include/plugids.h"
 
 namespace Steinberg {
 namespace HelloWorld {
 
-GUI::GUI(void* controller, DFT * dft, Projection * proj) : VSTGUIEditor(controller) {
+GUI::GUI(void* controller, DFT* dft, Projection* proj) : VSTGUIEditor(controller) {
 	ViewRect viewRect(0, 0, 700, 860);
 	setRect(viewRect);
 
-	this->dft = dft;
+	this->dft	 = dft;
 	this->proj = proj;
 
-	this->wave = nullptr;
+	this->wave	  = nullptr;
 	this->projection = nullptr;
 }
 
@@ -40,20 +41,14 @@ bool PLUGIN_API GUI::open(void* parent, const PlatformType& platformType) {
 	wave = new WaveView(waveSize, dft);
 	frame->addView(wave);
 
-	CRect projectionSize(40, 10 + 256 + 30, 40 + 512, 10 + 256 + 30 + 512);
+	CRect projectionSize(40, 10 + 256 + 30, 40 + 512 + 80, 10 + 256 + 30 + 512);
 	projection = new ProjectionView(projectionSize, proj);
 	frame->addView(projection);
 
-
-
-	cbmp = new CBitmap("up_button.png");
-	CRect ksize(0, 0, cbmp->getWidth(), cbmp->getHeight() / 2);
-	ksize.offset(550, 280);
-	CKickButton* kick = new CKickButton(ksize, this, kCCUpId, cbmp);
-	Vst::ParamValue value = controller->getParamNormalized(kCCUpId);
-	kick->setValueNormalized(value);
-	cbmp->forget();
-	frame->addView(kick);
+	CRect ccSize(558, 260, 558 + 64, 260 + 32);
+	double currentCC = controller->getParamNormalized(kCCId);
+	ccView = new NumericChangeView(ccSize, this, kCCId, "allow.png", CRect(0, 0, 18, 15), currentCC * 119, 0, 119);
+	frame->addView(ccView);
 
 	// 作成したフレームを開く
 	frame->open(parent);
@@ -64,15 +59,16 @@ bool PLUGIN_API GUI::open(void* parent, const PlatformType& platformType) {
 
 CMessageResult GUI::notify(CBaseObject* sender, const char* message) {
 	if (message == CVSTGUITimer::kMsgTimer) {
-		if (wave ) wave->update();
+		if (wave) wave->update();
 		if (projection) projection->update();
+		if (ccView) ccView->update();
 	}
 
 	return VSTGUIEditor::notify(sender, message);
 }
 
 void GUI::valueChanged(CControl* pControl) {
-	int32 tag = pControl->getTag();
+	int32 tag	  = pControl->getTag();
 	float value = pControl->getValueNormalized();
 	controller->setParamNormalized(tag, value);
 	controller->performEdit(tag, value);
