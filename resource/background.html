@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<script>
+		window.addEventListener('load', () => {
+			const ns = 'http://www.w3.org/2000/svg';
+
+			const sx = 40;
+			const sy = 10;
+			{
+				const spectrum = document.querySelector('#spectrum');
+
+				const width = 512;
+				const height = 256;
+				const sk = 2; // 横倍率
+
+				const df = 44100 / 8192;
+				const fmax = df * (width / sk - 1);
+
+				const fontSize = 20;
+
+				const rect = document.createElementNS(ns, 'rect');
+				rect.setAttribute('x', sx);
+				rect.setAttribute('y', sy);
+				rect.setAttribute('width', width);
+				rect.setAttribute('height', height);
+				rect.setAttribute('stroke', '#789');
+				rect.setAttribute('fill', '#e0e0e0');
+				rect.setAttribute('stroke-width', '1.5');
+				spectrum.appendChild(rect);
+
+				for (let f = 200; f < fmax; f += 200) {
+					const line = document.createElementNS(ns, 'line');
+					const x = f / df * sk + sx;
+					line.setAttribute('x1', x);
+					line.setAttribute('x2', x);
+					line.setAttribute('y1', 0 + sy);
+					line.setAttribute('y2', height + sy);
+					spectrum.appendChild(line);
+
+					const text = document.createElementNS(ns, 'text');
+					text.textContent = f;
+					text.setAttribute('x', x + 3);
+					text.setAttribute('y', height + 10 + fontSize);
+					text.setAttribute('stroke', 'none');
+					text.setAttribute('fill', '#789');
+					text.setAttribute('font-size', fontSize);
+					spectrum.appendChild(text);
+
+					const line2 = document.createElementNS(ns, 'line');
+					line2.setAttribute('x1', x);
+					line2.setAttribute('x2', x);
+					line2.setAttribute('y1', height + sy);
+					line2.setAttribute('y2', height + sy + 6 + fontSize);
+					line2.setAttribute('stroke', '#789');
+					spectrum.appendChild(line2);
+				}
+			}
+
+			const py = 30;
+			{
+				const projection = document.querySelector('#projection');
+
+				const oy = py + 256 + sy;
+
+				const width = 512;
+				const height = 512;
+				const sk = 2; // 横倍率
+
+				const df = 44100 / 8192;
+				const fmax = df * (width / sk - 1);
+
+
+				const rect = document.createElementNS(ns, 'rect');
+				rect.setAttribute('x', sx);
+				rect.setAttribute('y', oy);
+				rect.setAttribute('width', width);
+				rect.setAttribute('height', height);
+				rect.setAttribute('stroke', '#789');
+				rect.setAttribute('fill', '#e0e0e0');
+				rect.setAttribute('stroke-width', '1.5');
+				projection.appendChild(rect);
+
+				for (let f = 200; f < fmax; f += 200) {
+					const line = document.createElementNS(ns, 'line');
+					const x = f / df * sk + sx;
+					line.setAttribute('x1', x);
+					line.setAttribute('x2', x);
+					line.setAttribute('y1', 0 + oy);
+					line.setAttribute('y2', height + oy);
+					projection.appendChild(line);
+				}
+
+				const ny = 8;
+				for (let i = 1; i < ny; i++) {
+					const line = document.createElementNS(ns, 'line');
+
+					const y = oy + i / ny * height;
+					line.setAttribute('x1', 0 + sx);
+					line.setAttribute('x2', width + sx);
+					line.setAttribute('y1', y);
+					line.setAttribute('y2', y);
+					projection.appendChild(line);
+				}
+
+
+				const fontSize = 15;
+
+				const midicc1 = document.createElementNS(ns, 'text');
+				midicc1.textContent = 'MIDI';
+				midicc1.setAttribute('x', sx + width + 12);
+				midicc1.setAttribute('y', oy - 2 * (fontSize + 3));
+				midicc1.setAttribute('stroke', 'none');
+				midicc1.setAttribute('fill', '#000');
+				midicc1.setAttribute('font-size', fontSize * 1.15);
+				projection.appendChild(midicc1);
+
+				const midicc2 = document.createElementNS(ns, 'text');
+				midicc2.textContent = 'CC';
+				midicc2.setAttribute('x', sx + width + 22);
+				midicc2.setAttribute('y', oy - 1 * (fontSize + 3));
+				midicc2.setAttribute('stroke', 'none');
+				midicc2.setAttribute('fill', '#000');
+				midicc2.setAttribute('font-size', fontSize * 1.15);
+				projection.appendChild(midicc2);
+
+
+				const param1 = document.createElementNS(ns, 'text');
+				param1.textContent = 'PARAM';
+				param1.setAttribute('x', sx + width + 130);
+				param1.setAttribute('y', oy - 2 * (fontSize + 3));
+				param1.setAttribute('stroke', 'none');
+				param1.setAttribute('fill', '#000');
+				param1.setAttribute('font-size', fontSize * 1.15);
+				param1.setAttribute('text-anchor', 'end');
+				projection.appendChild(param1);
+
+				const param2 = document.createElementNS(ns, 'text');
+				param2.textContent = 'Fp';
+				param2.setAttribute('x', sx + width + 110);
+				param2.setAttribute('y', oy - 1 * (fontSize + 3));
+				param2.setAttribute('stroke', 'none');
+				param2.setAttribute('fill', '#000');
+				param2.setAttribute('font-size', fontSize * 1.15);
+				param2.setAttribute('text-anchor', 'end');
+				projection.appendChild(param2);
+
+				for (let i = 0; i <= ny; i++) {
+					const text = document.createElementNS(ns, 'text');
+					const y = oy + i / ny * height;
+
+					text.textContent = Math.ceil((ny - i) * 127 / ny);
+					text.setAttribute('x', sx + width + 12);
+					text.setAttribute('y', y);
+					text.setAttribute('stroke', 'none');
+					text.setAttribute('fill', '#789');
+					text.setAttribute('font-size', fontSize);
+					projection.appendChild(text);
+
+					const text2 = document.createElementNS(ns, 'text');
+
+					text2.textContent = ((ny - i) / ny * 2 - 1).toFixed(3);
+					text2.setAttribute('x', sx + width + 120);
+					text2.setAttribute('y', y);
+					text2.setAttribute('stroke', 'none');
+					text2.setAttribute('fill', '#789');
+					text2.setAttribute('font-size', fontSize);
+					text2.setAttribute('text-anchor', 'end');
+					projection.appendChild(text2);
+				}
+
+			}
+
+			document.querySelector('button')
+				.addEventListener('click', () => {
+					const svg = document.querySelector('svg');
+					const canvas = document.querySelector('canvas');
+					canvas.width = svg.width.baseVal.value;
+					canvas.height = svg.height.baseVal.value;
+					const context = canvas.getContext('2d');
+					const image = new Image;
+					image.onload = () => {
+						context.drawImage(image, 0, 0);
+						const a = document.createElement('a');
+						a.href = canvas.toDataURL('image/png');
+						a.setAttribute('download', 'background.png');
+						a.dispatchEvent(new MouseEvent('click'));
+					}
+					const svgData = new XMLSerializer().serializeToString(svg);
+					image.src = 'data:image/svg+xml;charset=utf-8;base64,'
+						+ btoa(unescape(encodeURIComponent(svgData)));
+				}, { once: false });
+
+		}, { once: true });
+	</script>
+</head>
+
+<body>
+	<div style="border: 10px solid black; width: min-content; height: min-content;">
+		<svg xmlns="http://www.w3.org/2000/svg" width="700" height="860">
+			<rect x="0" y="0" width="700" height="860" fill="white"></rect>
+			<g id="spectrum" stroke="#fff" stroke-width="1"></g>
+			<g id="projection" stroke="#fff" stroke-width="1"></g>
+		</svg>
+	</div>
+	<button>Download</button><canvas></canvas>
+</body>
+
+</html>

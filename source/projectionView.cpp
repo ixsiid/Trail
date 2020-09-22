@@ -16,8 +16,7 @@ ProjectionView::ProjectionView(const CRect& rect, Projection * proj) : CControl(
 	_points	 = new CPoint[32];
 	_points[0] = CPoint(0, 512);
 	_points[1] = CPoint(512, 0);
-	_points[2] = CPoint(128, 128);
-	count	 = 3;
+	count	 = 2;
 
 	sortPoints();
 
@@ -116,15 +115,16 @@ void ProjectionView::draw(CDrawContext* context) {
 		context->drawEllipse(CRect(_points[i].x - 3, _points[i].y - 3, _points[i].x + 3, _points[i].y + 3), CDrawStyle::kDrawStroked);
 	}
 
+	int r = 5;
 	if (active >= 0) {
 		context->setFillColor(CColor(180, 180, 180, 255));
 		CPoint* p = &_points[active];
-		context->drawEllipse(CRect(p->x - 3, p->y - 3, p->x + 3, p->y + 3), CDrawStyle::kDrawFilled);
+		context->drawEllipse(CRect(p->x - r, p->y - r, p->x + r, p->y + r), CDrawStyle::kDrawFilled);
 		context->drawLine(CPoint(0, p->y), CPoint(512, p->y));
 		context->drawLine(CPoint(p->x, 0), CPoint(p->x, 512));
 	} else if (showMousePointer) {
 		context->setFillColor(CColor(180, 180, 180, 255));
-		context->drawEllipse(CRect(m.x - 3, m.y - 3, m.x + 3, m.y + 3), CDrawStyle::kDrawFilled);
+		context->drawEllipse(CRect(m.x - r, m.y - r, m.x + r, m.y + r), CDrawStyle::kDrawFilled);
 	}
 
 	context->setFrameColor(CColor(19, 19, 254, 255));
@@ -147,7 +147,7 @@ void ProjectionView::sortPoints() {
 	for (int i = 0; i < count - 2; i++) index[i] = i + 2;
 
 	for (int i = 0; i < count - 3; i++) {
-		for (int k = i; k < count - 3; k++) {
+		for (int k = i; k < count - 2; k++) {
 			if (_points[index[i]].x > _points[index[k]].x) {
 				int t    = index[k];
 				index[k] = index[i];

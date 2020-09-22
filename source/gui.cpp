@@ -4,7 +4,7 @@ namespace Steinberg {
 namespace HelloWorld {
 
 GUI::GUI(void* controller, DFT * dft, Projection * proj) : VSTGUIEditor(controller) {
-	ViewRect viewRect(0, 0, 600, 900);
+	ViewRect viewRect(0, 0, 700, 860);
 	setRect(viewRect);
 
 	this->dft = dft;
@@ -23,7 +23,7 @@ bool PLUGIN_API GUI::open(void* parent, const PlatformType& platformType) {
 	if (frame) return false;
 
 	// 作成するフレームのサイズを設定
-	CRect size(0, 0, 600, 900);
+	CRect size(0, 0, 700, 860);
 
 	// フレームを作成。作成に失敗したら(NULLなら)終了。
 	// 引数には、フレームサイズ、自作GUIクラスのポインタを指定する
@@ -39,7 +39,7 @@ bool PLUGIN_API GUI::open(void* parent, const PlatformType& platformType) {
 	wave = new WaveView(waveSize, dft);
 	frame->addView(wave);
 
-	CRect projectionSize(40, 10 + 256 + 80, 40 + 512, 10 + 256 + 80 + 512);
+	CRect projectionSize(40, 10 + 256 + 30, 40 + 512, 10 + 256 + 30 + 512);
 	projection = new ProjectionView(projectionSize, proj);
 	frame->addView(projection);
 
