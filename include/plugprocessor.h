@@ -48,6 +48,7 @@ namespace HelloWorld {
 class PlugProcessor : public Vst::AudioEffect {
     public:
 	PlugProcessor();
+	~PlugProcessor();
 
 	tresult PLUGIN_API initialize(FUnknown* context) SMTG_OVERRIDE;
 	tresult PLUGIN_API setBusArrangements(Vst::SpeakerArrangement* inputs, int32 numIns,
@@ -65,20 +66,17 @@ class PlugProcessor : public Vst::AudioEffect {
 		return (Vst::IAudioProcessor*)new PlugProcessor();
 	}
 
-    protected:
-	Vst::ParamValue mParam1 = 0;
-	int16 mParam2		    = 0;
-	bool mBypass		    = false;
-
-	static const int32 paramF0Id = 100;
-
     private:
 	float* buffer;
 	int index;
 
+	int cc = 18;
+
 	const int dftnum = 8192;
 	DFT* dft;
 	Projection* proj;
+
+	const int version = 100;
 };
 
 //------------------------------------------------------------------------

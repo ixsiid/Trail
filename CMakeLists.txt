@@ -7,6 +7,9 @@ set(plug_sources
     source/plugcontroller.cpp
     source/plugprocessor.cpp
 
+    include/log.h
+    source/log.cpp
+
     include/gui.h
     source/gui.cpp
     include/waveview.h

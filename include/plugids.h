@@ -42,12 +42,11 @@ namespace HelloWorld {
 // HERE are defined the parameter Ids which are exported to the host
 enum HelloWorldParams : Vst::ParamID
 {
-	kBypassId = 100,
+	kParamFp = 2001,
+	kParamF0 = 2000,
 
-	kParamVolId = 102,
-	kParamOnId = 1000,
-
-	kParamF0 = 2000
+	kCCUpId = 103,
+	kCCDownId = 104,
 };
 
 

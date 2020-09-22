@@ -1,5 +1,6 @@
 #pragma once
 
+#include <base/source/fstreamer.h>
 #include <public.sdk/source/vst/vstaudioeffect.h>
 #include <public.sdk/source/vst/vstguieditor.h>
 
@@ -12,10 +13,14 @@ class Projection {
     public:
 	Projection();
 	~Projection();
+	size_t getPointList(CPoint* points);
 	void setPointList(CDrawContext::PointList* points);
 	double evaluate(double input);
 
 	CPoint latest;
+
+	bool save(IBStreamer* streamer);
+	bool load(IBStreamer* streamer);
 
     private:
 	CPoint* points;

@@ -43,5 +43,6 @@ BEGIN
     END
 END
 
-// myEditor.uidesc DATA ".\\editor.uidesc"
+
 background.png PNG "..\\image\\background.png"
+up_button.png PNG "..\\image\\up_button.png"

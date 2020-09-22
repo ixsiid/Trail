@@ -46,11 +46,15 @@
 #include "../include/plugids.h"
 #include "../include/waveview.h"
 
+#include "../include/log.h"
+
 namespace Steinberg {
 namespace HelloWorld {
 
 //-----------------------------------------------------------------------------
 PlugProcessor::PlugProcessor() {
+	new Log();
+
 	// register its editor class
 	setControllerClass(MyControllerUID);
 
@@ -62,6 +66,12 @@ PlugProcessor::PlugProcessor() {
 
 	dft	= new DFT(dftnum);
 	proj = new Projection();
+}
+
+PlugProcessor::~PlugProcessor() {
+	delete [] buffer;
+	delete dft;
+	delete proj;
 }
 
 //-----------------------------------------------------------------------------
@@ -103,18 +113,7 @@ tresult PLUGIN_API PlugProcessor::setupProcessing(Vst::ProcessSetup& setup) {
 tresult PLUGIN_API PlugProcessor::setActive(TBool state) {
 	if (state) {  // Initialize
 		// Allocate Memory Here
-
-		// ReaperではsetActiveの前にprocessが呼ばれるため、ココでの初期化は不適
-		if (!buffer) {
-			int bufferSize = dftnum * 2 + 4096;
-
-			buffer = new float[bufferSize];
-			for (int i = 0; i < bufferSize; i++) buffer[i] = 0;
-			index = 0;
-		}
-
-		if (!dft) dft = new DFT(dftnum);
-		if (!proj) proj = new Projection();
+		LOG("set active\n");
 
 		Vst::IMessage* messageA = allocateMessage();
 		messageA->setMessageID(u8"INITIALIZE");
@@ -128,18 +127,7 @@ tresult PLUGIN_API PlugProcessor::setActive(TBool state) {
 	} else {	// Release
 		// Free Memory if still allocated
 
-		if (buffer) {
-			delete[] buffer;
-			buffer = nullptr;
-		}
-		if (dft) {
-			delete dft;
-			dft = nullptr;
-		}
-		if (proj) {
-			delete proj;
-			proj = nullptr;
-		}
+		LOG("set deactive\n");
 	}
 
 	return AudioEffect::setActive(state);
@@ -151,27 +139,17 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData& data) {
 	if (data.inputParameterChanges) {
 		int32 numParamsChanged = data.inputParameterChanges->getParameterCount();
 		for (int32 index = 0; index < numParamsChanged; index++) {
-			Vst::IParamValueQueue* paramQueue =
-			    data.inputParameterChanges->getParameterData(index);
+			Vst::IParamValueQueue* paramQueue = data.inputParameterChanges->getParameterData(index);
 			if (paramQueue) {
 				Vst::ParamValue value;
 				int32 sampleOffset;
 				int32 numPoints = paramQueue->getPointCount();
 				switch (paramQueue->getParameterId()) {
-					case HelloWorldParams::kParamVolId:
-						if (paramQueue->getPoint(numPoints - 1, sampleOffset, value) ==
-						    kResultTrue)
-							mParam1 = value;
-						break;
-					case HelloWorldParams::kParamOnId:
-						if (paramQueue->getPoint(numPoints - 1, sampleOffset, value) ==
-						    kResultTrue)
-							mParam2 = value > 0 ? 1 : 0;
-						break;
-					case HelloWorldParams::kBypassId:
-						if (paramQueue->getPoint(numPoints - 1, sampleOffset, value) ==
-						    kResultTrue)
-							mBypass = (value > 0.5f);
+					case HelloWorldParams::kCCUpId:
+						if (paramQueue->getPoint(numPoints - 1, sampleOffset, value) == kResultTrue) {
+							cc++;
+						}
+						this->changed();
 						break;
 				}
 			}
@@ -215,9 +193,11 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData& data) {
 		event.flags				= 1;
 		event.type				= Vst::Event::kLegacyMIDICCOutEvent;
 		event.midiCCOut.channel		= 0;
-		event.midiCCOut.controlNumber = 18;
+		event.midiCCOut.controlNumber = cc;
 		event.midiCCOut.value		= 127 - intValue;
 		event.midiCCOut.value2		= 0;
+
+		data.outputEvents->addEvent(event);
 
 		value /= 512.0;
 		if (value < 0.0)
@@ -228,7 +208,6 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData& data) {
 		int32 paramIndex = 0;
 		int32 queueIndex = 0;
 
-		data.outputEvents->addEvent(event);
 		data.outputParameterChanges
 		    ->addParameterData(HelloWorldParams::kParamF0, paramIndex)
 		    ->addPoint(0, 1.0 - value, queueIndex);
@@ -239,23 +218,25 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData& data) {
 //------------------------------------------------------------------------
 tresult PLUGIN_API PlugProcessor::setState(IBStream* state) {
 	if (!state) return kResultFalse;
-
 	// called when we load a preset or project, the model has to be reloaded
+	
+	LOG("set state\n");
 
 	IBStreamer streamer(state, kLittleEndian);
+	LOG("0\n");
 
-	float savedParam1 = 0.f;
-	if (streamer.readFloat(savedParam1) == false) return kResultFalse;
+	uint32 _v;
+	if (!streamer.readInt32u(_v)) {
+		LOG("1 fail\n");
+		return kResultFalse;
+	}
+	
+	LOG("1\n");
+	if (_v != version) return kResultFalse;
+	LOG("2\n");
 
-	int32 savedParam2 = 0;
-	if (streamer.readInt32(savedParam2) == false) return kResultFalse;
-
-	int32 savedBypass = 0;
-	if (streamer.readInt32(savedBypass) == false) return kResultFalse;
-
-	mParam1 = savedParam1;
-	mParam2 = savedParam2 > 0 ? 1 : 0;
-	mBypass = savedBypass > 0;
+	if (!proj->load(&streamer)) return kResultFalse;
+	LOG("3\n");
 
 	return kResultOk;
 }
@@ -263,15 +244,14 @@ tresult PLUGIN_API PlugProcessor::setState(IBStream* state) {
 //------------------------------------------------------------------------
 tresult PLUGIN_API PlugProcessor::getState(IBStream* state) {
 	// here we need to save the model (preset or project)
-
-	float toSaveParam1 = mParam1;
-	int32 toSaveParam2 = mParam2;
-	int32 toSaveBypass = mBypass ? 1 : 0;
+	
+	LOG("get state\n");
 
 	IBStreamer streamer(state, kLittleEndian);
-	streamer.writeFloat(toSaveParam1);
-	streamer.writeInt32(toSaveParam2);
-	streamer.writeInt32(toSaveBypass);
+
+	streamer.writeInt32u(version);
+
+	proj->save(&streamer);
 
 	return kResultOk;
 }

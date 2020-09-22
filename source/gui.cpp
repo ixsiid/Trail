@@ -1,4 +1,5 @@
 #include "../include/gui.h"
+#include "../include/plugids.h"
 
 namespace Steinberg {
 namespace HelloWorld {
@@ -43,6 +44,17 @@ bool PLUGIN_API GUI::open(void* parent, const PlatformType& platformType) {
 	projection = new ProjectionView(projectionSize, proj);
 	frame->addView(projection);
 
+
+
+	cbmp = new CBitmap("up_button.png");
+	CRect ksize(0, 0, cbmp->getWidth(), cbmp->getHeight() / 2);
+	ksize.offset(550, 280);
+	CKickButton* kick = new CKickButton(ksize, this, kCCUpId, cbmp);
+	Vst::ParamValue value = controller->getParamNormalized(kCCUpId);
+	kick->setValueNormalized(value);
+	cbmp->forget();
+	frame->addView(kick);
+
 	// 作成したフレームを開く
 	frame->open(parent);
 
@@ -60,6 +72,10 @@ CMessageResult GUI::notify(CBaseObject* sender, const char* message) {
 }
 
 void GUI::valueChanged(CControl* pControl) {
+	int32 tag = pControl->getTag();
+	float value = pControl->getValueNormalized();
+	controller->setParamNormalized(tag, value);
+	controller->performEdit(tag, value);
 }
 
 void PLUGIN_API GUI::close() {
