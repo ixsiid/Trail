@@ -45,8 +45,6 @@ void WaveView::draw(CDrawContext* context) {
 	CPoint f = {dft->f0 * 2.0, 10 + 256 + 80256};
 	context->drawLine(s, f);
 
-	context->setFrameColor(CColor(193, 193, 254, 255));
-	context->drawRect(CRect(halfBorderWidth, halfBorderWidth, width, height), kDrawStroked);
 	setDirty(false);
 }
 

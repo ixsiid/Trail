@@ -119,15 +119,93 @@ void DFT::process(float* source) {
 		}
 	}
 
+	float noiseLevel = 0.0f;
 	// 1 - 256 で 0(DC) - 1389.312Hz (44100), 1512.183Hz (44800)
 	for (int i = 1; i <= 256; i++) {
 		int k   = index[i];
 		float p = re[k] * re[k] + im[k] * im[k];
 
 		spectrum[i - 1] = logf(p * i);
-		fpeak[i - 1]	 = spectrum[i - 1] - i * lowFreqWeight + 16.0;
+
+		fpeak[i - 1] = noiseLevel;
 	}
 
+	// 包括線を書く
+	int vertex[32];
+	float vertexValue[32];
+	vertex[0]		= 256;
+	vertexValue[0] = noiseLevel;
+	int vIndex	= 1;
+	float left	= noiseLevel;
+
+	bool loop = true;
+	while (loop) {
+		loop			   = false;
+		float len_max	   = 0.0f;
+		int len_max_index = 0;
+
+		float a = (vertexValue[vIndex - 1] - left) / vertex[vIndex - 1];
+		for (int i = 1; i < vertex[vIndex - 1] - 1; i++) {
+			float y	= left + a * i;
+			float len = spectrum[i] - y;
+			if (len > len_max) {
+				len_max	    = len;
+				len_max_index = i;
+				loop		    = true;
+			}
+		}
+		if (loop) {
+			vertexValue[vIndex] = spectrum[len_max_index];
+			vertex[vIndex]		= len_max_index;
+			vIndex++;
+		}
+	}
+
+	int leftIndex = 0;
+	left		    = noiseLevel;
+	f0		    = vertex[vIndex - 1];
+	while (vIndex-- > 0) {
+		int rightIndex = vertex[vIndex];
+		float right	= vertexValue[vIndex];
+		for (int i = leftIndex; i < rightIndex; i++) {
+			float a  = (float)(i - leftIndex) / (rightIndex - leftIndex);
+			fpeak[i] = a * (right - left) + left;
+		}
+		leftIndex = rightIndex;
+		left		= right;
+	}
+
+	/*
+
+	// 移動平均
+	const int n = 5;
+	float mn	  = 0.0f;
+	for (int i = 0; i < n - 1; i++) {
+		mn += spectrum[i];
+		fpeak[i] = 0;
+	}
+	for (int i = n - 1; i <= 256 + n; i++) {
+		mn += spectrum[i];
+		fpeak[i] = mn / n * 2.0f + 2.0f;
+		mn -= spectrum[i - n + 1];
+	}
+
+	f0 = 0;
+	float baseLevel = (spectrum[0] + spectrum[1] + spectrum[2] + spectrum[3]) / 4.0f;
+	float th_k = 0.3;
+	for(int i=10; i<250; i++) {
+		float threshold = (fpeak[i] - baseLevel) * th_k;
+		if (fpeak[i] - fpeak[i-5] > threshold
+		&& fpeak[i] - fpeak[i+5] > threshold
+		&& fpeak[i] > fpeak[i-1]
+		&& fpeak[i] < fpeak[i+1]) {
+			f0 = i;
+			break;
+		}
+	}
+
+
+	/*
 	f0	    = 0;
 	float pv = fpeak[0];
 	for (int i = 1; i < 256; i++) {
@@ -136,6 +214,7 @@ void DFT::process(float* source) {
 			pv = fpeak[i];
 		}
 	}
+	*/
 }
 
 }  // namespace HelloWorld
