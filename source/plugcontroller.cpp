@@ -110,7 +110,6 @@ tresult PlugController::notify(Vst::IMessage* message) {
 			this->setParamNormalized(kCCId, init->midi_cc_num);
 			this->setParamNormalized(kNoiseLevel, init->noise_level);
 
-			delete init;
 			return kResultOk;
 		}
 	}

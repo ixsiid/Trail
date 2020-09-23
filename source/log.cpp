@@ -18,6 +18,7 @@ Log::Log() {
 
 #ifdef _ACTIVATE_LOG
 Log* Log::io = nullptr;
+char Log::buffer[512];
 
 Log::~Log() {
 	fclose(fp);

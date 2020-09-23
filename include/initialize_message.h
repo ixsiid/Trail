@@ -6,7 +6,7 @@ namespace HelloWorld {
 class DFT;
 class Projection;
 
-class InitializeMessage {
+struct InitializeMessage {
     public:
 	DFT* dft;
 	Projection* projection;

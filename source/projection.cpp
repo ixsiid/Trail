@@ -62,9 +62,7 @@ bool Projection::load(IBStreamer* streamer) {
 	if (!streamer->readInt32u(d)) return false;
 	count = d;
 
-	char text[512];
-	sprintf(text, "count: %d\n", count);
-	LOG(text);
+	LOGN("count: %d\n", count);
 
 	double buffer[64];
 	if (!streamer->readDoubleArray(buffer, 64)) return false;
@@ -72,11 +70,8 @@ bool Projection::load(IBStreamer* streamer) {
 		points[i].x = buffer[i * 2 + 0];
 		points[i].y = buffer[i * 2 + 1];
 
-		sprintf(text, "buffer %d: %f, %f\n", i, buffer[i * 2 + 0], buffer[i * 2 + 1]);
-		LOG(text);
-
-		sprintf(text, "point %d: %f, %f\n", i, this->points[i].x, this->points[i].y);
-		LOG(text);
+		LOGN("buffer %d: %f, %f\n", i, buffer[i * 2 + 0], buffer[i * 2 + 1]);
+		LOGN("point %d: %f, %f\n", i, this->points[i].x, this->points[i].y);
 	}
 
 	return true;

@@ -43,11 +43,10 @@
 
 #include "../include/dft.h"
 #include "../include/gui.h"
+#include "../include/initialize_message.h"
+#include "../include/log.h"
 #include "../include/plugids.h"
 #include "../include/waveview.h"
-
-#include "../include/log.h"
-#include "../include/initialize_message.h"
 
 namespace Steinberg {
 namespace HelloWorld {
@@ -70,7 +69,7 @@ PlugProcessor::PlugProcessor() {
 }
 
 PlugProcessor::~PlugProcessor() {
-	delete [] buffer;
+	delete[] buffer;
 	delete dft;
 	delete proj;
 }
@@ -116,16 +115,20 @@ tresult PLUGIN_API PlugProcessor::setActive(TBool state) {
 		// Allocate Memory Here
 		LOG("set active\n");
 
-		InitializeMessage * initializeMessage = new InitializeMessage();
-		initializeMessage->dft = dft;
-		initializeMessage->projection = proj;
-		initializeMessage->midi_cc_num = cc  / 119.0f;
-		initializeMessage->noise_level = (dft->noise_level / 32.0f) + ((256.0f + 160.0f) / 256.0f);
+		InitializeMessage initializeMessage;
+		initializeMessage.dft	    = dft;
+		initializeMessage.projection = proj;
+
+		initializeMessage.midi_cc_num = cc / 119.0f;
+		initializeMessage.noise_level = (dft->noise_level / 32.0f) + ((256.0f - 160.0f) / 256.0f);
 
 		Vst::IMessage* message = allocateMessage();
 		message->setMessageID(u8"INITIALIZE");
-		message->getAttributes()->setInt(u8"PARAMETER", (int64)initializeMessage);
+		message->getAttributes()->setInt(u8"PARAMETER", (int64)&initializeMessage);
 		sendMessage(message);
+
+		LOGN("%f\n%f\n%f\n%f\n", dft->noise_level, dft->noise_level / 32.0f, ((256.0f - 160.0f) / 256.0f), (dft->noise_level / 32.0f) + ((256.0f + 160.0f) / 256.0f));
+		LOGN("Send: %f -> %f\n", dft->noise_level, initializeMessage.noise_level);
 	} else {	// Release
 		// Free Memory if still allocated
 
@@ -155,6 +158,8 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData& data) {
 					case HelloWorldParams::kNoiseLevel:
 						if (paramQueue->getPoint(numPoints - 1, sampleOffset, value) == kResultTrue) {
 							dft->noise_level = (value - ((256.0 - 160.0) / 256.0)) * 32.0;
+
+							LOGN("Param Queue: %f -> %f\n", value, dft->noise_level);
 						}
 				}
 			}
@@ -224,7 +229,7 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData& data) {
 tresult PLUGIN_API PlugProcessor::setState(IBStream* state) {
 	if (!state) return kResultFalse;
 	// called when we load a preset or project, the model has to be reloaded
-	
+
 	LOG("set state\n");
 
 	IBStreamer streamer(state, kLittleEndian);
@@ -253,7 +258,7 @@ tresult PLUGIN_API PlugProcessor::setState(IBStream* state) {
 //------------------------------------------------------------------------
 tresult PLUGIN_API PlugProcessor::getState(IBStream* state) {
 	// here we need to save the model (preset or project)
-	
+
 	LOG("get state\n");
 
 	IBStreamer streamer(state, kLittleEndian);
