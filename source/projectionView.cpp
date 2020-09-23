@@ -18,15 +18,6 @@ ProjectionView::ProjectionView(const CRect& rect, Projection * proj) : CControl(
 	_points	 = new CPoint[32];
 	count = proj->getPointList(_points);
 
-	LOG("Projection View constructor\n");
-	char text[512];
-	sprintf(text, "count: %d\n", count);
-	LOG(text);
-	for(int i=0; i<count; i++) {
-		sprintf(text, "Point [%d]: %f, %f\n", i, _points[0].x, _points[0].y);
-		LOG(text);
-	}
-
 	sortPoints();
 
 	m			  = CPoint(256, 256);

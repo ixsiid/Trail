@@ -9,6 +9,7 @@ set(plug_sources
 
     include/log.h
     source/log.cpp
+    include/initialize_message.h
 
     include/gui.h
     source/gui.cpp

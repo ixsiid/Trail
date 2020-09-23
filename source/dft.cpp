@@ -6,8 +6,8 @@ namespace HelloWorld {
 DFT::DFT(int num) {
 	this->num = num;
 
-	f0		    = 0.0;
-	lowFreqWeight = 0.17f;
+	f0		  = 0.0;
+	noise_level = 0.0f;
 
 	// 110 ~ 1760 Hzの間を対象とする
 
@@ -119,7 +119,6 @@ void DFT::process(float* source) {
 		}
 	}
 
-	float noiseLevel = 0.0f;
 	// 1 - 256 で 0(DC) - 1389.312Hz (44100), 1512.183Hz (44800)
 	for (int i = 1; i <= 256; i++) {
 		int k   = index[i];
@@ -127,16 +126,17 @@ void DFT::process(float* source) {
 
 		spectrum[i - 1] = logf(p * i);
 
-		fpeak[i - 1] = noiseLevel;
+		fpeak[i - 1] = noise_level;
 	}
 
+	// F0推定
 	// 包括線を書く
 	int vertex[32];
 	float vertexValue[32];
 	vertex[0]		= 256;
-	vertexValue[0] = noiseLevel;
+	vertexValue[0] = noise_level;
 	int vIndex	= 1;
-	float left	= noiseLevel;
+	float left	= noise_level;
 
 	bool loop = true;
 	while (loop) {
@@ -162,7 +162,7 @@ void DFT::process(float* source) {
 	}
 
 	int leftIndex = 0;
-	left		    = noiseLevel;
+	left		    = noise_level;
 	f0		    = vertex[vIndex - 1];
 	while (vIndex-- > 0) {
 		int rightIndex = vertex[vIndex];
@@ -174,47 +174,6 @@ void DFT::process(float* source) {
 		leftIndex = rightIndex;
 		left		= right;
 	}
-
-	/*
-
-	// 移動平均
-	const int n = 5;
-	float mn	  = 0.0f;
-	for (int i = 0; i < n - 1; i++) {
-		mn += spectrum[i];
-		fpeak[i] = 0;
-	}
-	for (int i = n - 1; i <= 256 + n; i++) {
-		mn += spectrum[i];
-		fpeak[i] = mn / n * 2.0f + 2.0f;
-		mn -= spectrum[i - n + 1];
-	}
-
-	f0 = 0;
-	float baseLevel = (spectrum[0] + spectrum[1] + spectrum[2] + spectrum[3]) / 4.0f;
-	float th_k = 0.3;
-	for(int i=10; i<250; i++) {
-		float threshold = (fpeak[i] - baseLevel) * th_k;
-		if (fpeak[i] - fpeak[i-5] > threshold
-		&& fpeak[i] - fpeak[i+5] > threshold
-		&& fpeak[i] > fpeak[i-1]
-		&& fpeak[i] < fpeak[i+1]) {
-			f0 = i;
-			break;
-		}
-	}
-
-
-	/*
-	f0	    = 0;
-	float pv = fpeak[0];
-	for (int i = 1; i < 256; i++) {
-		if (pv < fpeak[i]) {
-			f0 = i;
-			pv = fpeak[i];
-		}
-	}
-	*/
 }
 
 }  // namespace HelloWorld

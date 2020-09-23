@@ -47,6 +47,7 @@
 #include "../include/waveview.h"
 
 #include "../include/log.h"
+#include "../include/initialize_message.h"
 
 namespace Steinberg {
 namespace HelloWorld {
@@ -115,20 +116,16 @@ tresult PLUGIN_API PlugProcessor::setActive(TBool state) {
 		// Allocate Memory Here
 		LOG("set active\n");
 
-		Vst::IMessage* messageA = allocateMessage();
-		messageA->setMessageID(u8"INITIALIZE");
-		messageA->getAttributes()->setInt(u8"DFT", (int64)dft);
-		sendMessage(messageA);
+		InitializeMessage * initializeMessage = new InitializeMessage();
+		initializeMessage->dft = dft;
+		initializeMessage->projection = proj;
+		initializeMessage->midi_cc_num = cc  / 119.0f;
+		initializeMessage->noise_level = (dft->noise_level / 32.0f) + ((256.0f + 160.0f) / 256.0f);
 
-		Vst::IMessage* messageB = allocateMessage();
-		messageB->setMessageID(u8"INITIALIZE");
-		messageB->getAttributes()->setInt(u8"PROJECTION", (int64)proj);
-		sendMessage(messageB);
-
-		Vst::IMessage* messageCC = allocateMessage();
-		messageCC->setMessageID(u8"INITIALIZE");
-		messageCC->getAttributes()->setInt(u8"MIDI CC", cc);
-		sendMessage(messageCC);
+		Vst::IMessage* message = allocateMessage();
+		message->setMessageID(u8"INITIALIZE");
+		message->getAttributes()->setInt(u8"PARAMETER", (int64)initializeMessage);
+		sendMessage(message);
 	} else {	// Release
 		// Free Memory if still allocated
 
@@ -155,6 +152,10 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData& data) {
 							cc = value * 119;
 						}
 						break;
+					case HelloWorldParams::kNoiseLevel:
+						if (paramQueue->getPoint(numPoints - 1, sampleOffset, value) == kResultTrue) {
+							dft->noise_level = (value - ((256.0 - 160.0) / 256.0)) * 32.0;
+						}
 				}
 			}
 		}
@@ -234,9 +235,17 @@ tresult PLUGIN_API PlugProcessor::setState(IBStream* state) {
 
 	if (!proj->load(&streamer)) return kResultFalse;
 
+	LOG("CC\n");
 	int32 _cc;
 	if (!streamer.readInt32(_cc)) return kResultFalse;
 	cc = _cc;
+	LOG("CCC\n");
+
+	float _noise_level;
+	if (!streamer.readFloat(_noise_level)) return kResultFalse;
+	dft->noise_level = _noise_level;
+
+	LOG("CCCC\n");
 
 	return kResultOk;
 }
@@ -254,6 +263,7 @@ tresult PLUGIN_API PlugProcessor::getState(IBStream* state) {
 	proj->save(&streamer);
 
 	streamer.writeInt32(cc);
+	streamer.writeFloat(dft->noise_level);
 
 	return kResultOk;
 }

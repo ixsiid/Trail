@@ -15,11 +15,11 @@ class DFT {
 	float* fpeak;
 
 	double f0;
-	float lowFreqWeight;
+	float noise_level;
 
     private:
 	int num;
-	
+
 	float* re;
 	float* im;
 

@@ -46,6 +46,7 @@ enum HelloWorldParams : Vst::ParamID
 	kParamF0 = 2000,
 
 	kCCId = 103,
+	kNoiseLevel = 104,
 };
 
 
