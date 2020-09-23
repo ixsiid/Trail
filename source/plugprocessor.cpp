@@ -113,8 +113,6 @@ tresult PLUGIN_API PlugProcessor::setupProcessing(Vst::ProcessSetup& setup) {
 tresult PLUGIN_API PlugProcessor::setActive(TBool state) {
 	if (state) {  // Initialize
 		// Allocate Memory Here
-		LOG("set active\n");
-
 		InitializeMessage initializeMessage;
 		initializeMessage.dft	    = dft;
 		initializeMessage.projection = proj;
@@ -126,13 +124,8 @@ tresult PLUGIN_API PlugProcessor::setActive(TBool state) {
 		message->setMessageID(u8"INITIALIZE");
 		message->getAttributes()->setInt(u8"PARAMETER", (int64)&initializeMessage);
 		sendMessage(message);
-
-		LOGN("%f\n%f\n%f\n%f\n", dft->noise_level, dft->noise_level / 32.0f, ((256.0f - 160.0f) / 256.0f), (dft->noise_level / 32.0f) + ((256.0f + 160.0f) / 256.0f));
-		LOGN("Send: %f -> %f\n", dft->noise_level, initializeMessage.noise_level);
 	} else {	// Release
 		// Free Memory if still allocated
-
-		LOG("set deactive\n");
 	}
 
 	return AudioEffect::setActive(state);
@@ -158,8 +151,6 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData& data) {
 					case HelloWorldParams::kNoiseLevel:
 						if (paramQueue->getPoint(numPoints - 1, sampleOffset, value) == kResultTrue) {
 							dft->noise_level = (value - ((256.0 - 160.0) / 256.0)) * 32.0;
-
-							LOGN("Param Queue: %f -> %f\n", value, dft->noise_level);
 						}
 				}
 			}
@@ -210,6 +201,7 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData& data) {
 		data.outputEvents->addEvent(event);
 
 		value /= 512.0;
+		value = 1.0 - value;
 		if (value < 0.0)
 			value = 0.0;
 		else if (value > 1.0)
@@ -217,10 +209,15 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData& data) {
 
 		int32 paramIndex = 0;
 		int32 queueIndex = 0;
+		tresult r;
 
-		data.outputParameterChanges
+		r = data.outputParameterChanges
+		    ->addParameterData(HelloWorldParams::kParamFp, paramIndex)
+		    ->addPoint(0, value, queueIndex);
+		    
+		r = data.outputParameterChanges
 		    ->addParameterData(HelloWorldParams::kParamF0, paramIndex)
-		    ->addPoint(0, 1.0 - value, queueIndex);
+		    ->addPoint(0, dft->f0 * 8192 / 44100, queueIndex);
 	}
 	return kResultOk;
 }
@@ -229,9 +226,6 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData& data) {
 tresult PLUGIN_API PlugProcessor::setState(IBStream* state) {
 	if (!state) return kResultFalse;
 	// called when we load a preset or project, the model has to be reloaded
-
-	LOG("set state\n");
-
 	IBStreamer streamer(state, kLittleEndian);
 
 	uint32 _v;
@@ -240,17 +234,14 @@ tresult PLUGIN_API PlugProcessor::setState(IBStream* state) {
 
 	if (!proj->load(&streamer)) return kResultFalse;
 
-	LOG("CC\n");
 	int32 _cc;
 	if (!streamer.readInt32(_cc)) return kResultFalse;
 	cc = _cc;
-	LOG("CCC\n");
 
 	float _noise_level;
 	if (!streamer.readFloat(_noise_level)) return kResultFalse;
 	dft->noise_level = _noise_level;
 
-	LOG("CCCC\n");
 
 	return kResultOk;
 }
@@ -258,9 +249,6 @@ tresult PLUGIN_API PlugProcessor::setState(IBStream* state) {
 //------------------------------------------------------------------------
 tresult PLUGIN_API PlugProcessor::getState(IBStream* state) {
 	// here we need to save the model (preset or project)
-
-	LOG("get state\n");
-
 	IBStreamer streamer(state, kLittleEndian);
 
 	streamer.writeInt32u(version);

@@ -83,8 +83,6 @@ tresult PLUGIN_API PlugController::setComponentState(IBStream* state) {
 	if (!state)
 		return kResultFalse;
 
-	LOG("set component state\n");
-
 	return kResultOk;
 }
 
@@ -98,7 +96,6 @@ IPlugView* PLUGIN_API PlugController::createView(FIDString name) {
 }
 
 tresult PlugController::notify(Vst::IMessage* message) {
-	LOG("RECV MESSAGE\n");
 	if (strcmp(message->getMessageID(), u8"INITIALIZE") == 0) {
 		int64 p;
 		tresult r = message->getAttributes()->getInt(u8"PARAMETER", p);

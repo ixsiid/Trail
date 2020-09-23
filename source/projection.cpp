@@ -8,8 +8,6 @@ namespace HelloWorld {
 using namespace VSTGUI;
 
 Projection::Projection() {
-	LOG("Projection constructor\n");
-
 	points	= new CPoint[32];
 	points[0] = CPoint(0.0, 512.0);
 	points[1] = CPoint(512.0, 0.0);
@@ -42,8 +40,6 @@ double Projection::evaluate(double input) {
 }
 
 bool Projection::save(IBStreamer* streamer) {
-	LOG("projection save\n");
-
 	streamer->writeInt32u(count);
 
 	double* xy = new double[64];
@@ -62,16 +58,11 @@ bool Projection::load(IBStreamer* streamer) {
 	if (!streamer->readInt32u(d)) return false;
 	count = d;
 
-	LOGN("count: %d\n", count);
-
 	double buffer[64];
 	if (!streamer->readDoubleArray(buffer, 64)) return false;
 	for (int i = 0; i < count; i++) {
 		points[i].x = buffer[i * 2 + 0];
 		points[i].y = buffer[i * 2 + 1];
-
-		LOGN("buffer %d: %f, %f\n", i, buffer[i * 2 + 0], buffer[i * 2 + 1]);
-		LOGN("point %d: %f, %f\n", i, this->points[i].x, this->points[i].y);
 	}
 
 	return true;
