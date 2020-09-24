@@ -14,8 +14,8 @@ cmake C:\Users\tal\.vst\VST3_SDK -G"Visual Studio 16 2019" `
 		-DSMTG_ADD_VST3_HOSTING_SAMPLES=FALSE `
 		-DSMTG_ADD_VST3_PLUGINS_SAMPLES=FALSE
 
-cmake --build .
+# cmake --build .
 
-bin\Debug\validator.exe VST3\Debug\${CONFIG_PLUGIN_NAME}.vst3\Contents\x86-win\${CONFIG_PLUGIN_NAME}.vst3
+# bin\Debug\validator.exe VST3\Debug\${CONFIG_PLUGIN_NAME}.vst3\Contents\x86-win\${CONFIG_PLUGIN_NAME}.vst3
 
-# cmake --build . --config Release
+cmake --build . --config Release

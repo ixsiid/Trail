@@ -2,7 +2,7 @@
 
 #include <public.sdk/source/vst/vstaudioeffect.h>
 
-#define _ACTIVATE_LOG
+// #define _ACTIVATE_LOG
 
 #ifdef _ACTIVATE_LOG
 #define LOG(x) Log::io->write(x "\n")
@@ -10,6 +10,7 @@
                   Log::io->write(Log::buffer);
 #else
 #define LOG(x)
+#define LOGN(...)
 #endif
 
 namespace Steinberg {

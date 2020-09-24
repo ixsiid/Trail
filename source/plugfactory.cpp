@@ -49,6 +49,8 @@ bool InitModule ()
 // called after library is unloaded
 bool DeinitModule ()
 {
+#ifdef _ACTIVATE_LOG
 	delete Steinberg::HelloWorld::Log::io;
+#endif
 	return true;
 }

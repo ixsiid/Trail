@@ -5,15 +5,13 @@ namespace HelloWorld {
 
 
 Log::Log() {
-#ifndef _ACTIVATE_LOG
-	return;
-#endif
-
+#ifdef _ACTIVATE_LOG
 	fp = fopen("C:\\Users\\tal\\vst_sample.txt", "a");
 	if (Log::io) return;
 
 	Log::io = this;
 	write("//----  Logging Start ----//\n");
+#endif
 }
 
 #ifdef _ACTIVATE_LOG
