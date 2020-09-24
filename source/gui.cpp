@@ -60,7 +60,7 @@ bool PLUGIN_API GUI::open(void* parent, const PlatformType& platformType) {
 	CBitmap* slider_back = new CBitmap("v_slider_back.png");
 	CBitmap* slider_knob = new CBitmap("v_slider_knob.png");
 	CRect vsize(0, 0, slider_back->getWidth(), slider_back->getHeight());
-	vsize.offset(5, 1);
+	vsize.offset(5, 6);
 	int slider_margin = 5;
 
 	CVerticalSlider* slider = new CVerticalSlider(vsize, this, kNoiseLevel,

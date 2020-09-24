@@ -1,8 +1,8 @@
 . ".\config.ps1"
 
-$ENV:Path += ";C:\Users\tal\AppData\Local\bin\cmake-3.18.3-win64-x64\bin"
+$ENV:Path += ";C:\Users\tal\AppData\Local\bin\cmake-3.18.2-win64-x64\bin"
 Set-Location work
-cmake C:\Users\tal\.vst\VST3_SDK -G"Visual Studio 15 2017" `
+cmake C:\Users\tal\.vst\VST3_SDK -G"Visual Studio 16 2019" `
 		-DPLUGIN_NAME="${CONFIG_PLUGIN_NAME}" `
 		-DVENDOR="${CONFIG_VENDOR}" `
 		-DURL="${CONFIG_URL}" `

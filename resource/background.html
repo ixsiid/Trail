@@ -214,6 +214,27 @@
 				vline2.setAttribute('stroke-width', '1.0');
 				projection.appendChild(vline2);
 
+				{
+					const nl = document.createElementNS(ns, 'text');
+					nl.textContent = 'Noise';
+					nl.setAttribute('x', 18);
+					nl.setAttribute('y', 290);
+					nl.setAttribute('stroke', 'none');
+					nl.setAttribute('fill', '#789');
+					nl.setAttribute('font-size', fontSize - 2);
+					nl.setAttribute('text-anchor', 'middle');
+					projection.appendChild(nl);
+
+					const nl2 = document.createElementNS(ns, 'text');
+					nl2.textContent = 'Level';
+					nl2.setAttribute('x', 18);
+					nl2.setAttribute('y', 304);
+					nl2.setAttribute('stroke', 'none');
+					nl2.setAttribute('fill', '#789');
+					nl2.setAttribute('font-size', fontSize - 2);
+					nl2.setAttribute('text-anchor', 'middle');
+					projection.appendChild(nl2);
+				}
 			}
 
 			document.querySelector('button')
@@ -246,6 +267,13 @@
 			<rect x="0" y="0" width="700" height="860" fill="white"></rect>
 			<g id="spectrum" stroke="#fff" stroke-width="1"></g>
 			<g id="projection" stroke="#fff" stroke-width="1"></g>
+			<g transform="translate(120 830)">
+				<text x="-110" y="20">Developed by</text>
+				<text x="30" y="20" style="font-family: Helvetica; font-weight: 75;">@ixsiid</text>
+				<g transform="scale(0.08,0.08)">
+				<defs><style>.cls-1{fill:none;}.cls-2{fill:#1da1f2;}</style></defs><title>Twitter_Logo_Blue</title><rect class="cls-1" width="400" height="400"/><path class="cls-2" d="M153.62,301.59c94.34,0,145.94-78.16,145.94-145.94,0-2.22,0-4.43-.15-6.63A104.36,104.36,0,0,0,325,122.47a102.38,102.38,0,0,1-29.46,8.07,51.47,51.47,0,0,0,22.55-28.37,102.79,102.79,0,0,1-32.57,12.45,51.34,51.34,0,0,0-87.41,46.78A145.62,145.62,0,0,1,92.4,107.81a51.33,51.33,0,0,0,15.88,68.47A50.91,50.91,0,0,1,85,169.86c0,.21,0,.43,0,.65a51.31,51.31,0,0,0,41.15,50.28,51.21,51.21,0,0,1-23.16.88,51.35,51.35,0,0,0,47.92,35.62,102.92,102.92,0,0,1-63.7,22A104.41,104.41,0,0,1,75,278.55a145.21,145.21,0,0,0,78.62,23"/>
+				</g>
+			</g>
 		</svg>
 	</div>
 	<button>Download</button><canvas></canvas>

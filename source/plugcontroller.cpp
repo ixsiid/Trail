@@ -55,7 +55,6 @@ tresult PLUGIN_API PlugController::setComponentState(IBStream* state) {
 
 IPlugView* PLUGIN_API PlugController::createView(FIDString name) {
 	if (strcmp(name, "editor") == 0) {
-		return nullptr;
 		GUI* view = new GUI(this, dft, proj);
 		return view;
 	}
