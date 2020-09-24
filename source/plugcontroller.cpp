@@ -59,7 +59,7 @@ tresult PLUGIN_API PlugController::initialize(FUnknown* context) {
 						    0, STR16("MIDI CC"));
 
 		parameters.addParameter(STR16("Noise Level"), 0, 0, 0.0,
-						    Vst::ParameterInfo::kIsHidden,
+						    Vst::ParameterInfo::kIsHidden | Vst::ParameterInfo::kIsReadOnly,
 						    HelloWorldParams::kNoiseLevel,
 						    0, STR16("Noise"));
 

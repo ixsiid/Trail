@@ -1,0 +1,6 @@
+$CONFIG_PLUGIN_NAME = "Trail"
+$CONFIG_VENDOR= "Halzion"
+$CONFIG_URL = "https://halzion.net"
+$CONFIG_MAIL = "ixsiid@halzion.net"
+$CONFIG_COPYRIGHT = "© 2020 Halzion"
+$CONFIG_TRADEMARK = ""

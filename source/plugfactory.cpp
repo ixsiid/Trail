@@ -41,9 +41,9 @@
 #include "../include/plugids.h"			// for uids
 #include "../include/version.h"			// for version and naming
 
-#define stringSubCategory	"Fx"	// Subcategory for this plug-in (to be changed if needed, see PlugType in ivstaudioprocessor.h)
+#define stringSubCategory	"Fx|Analyzer"	// Subcategory for this plug-in (to be changed if needed, see PlugType in ivstaudioprocessor.h)
 
-BEGIN_FACTORY_DEF (stringCompanyName, stringCompanyWeb, stringCompanyEmail)
+BEGIN_FACTORY_DEF (stringVendorName, stringVendorWeb, stringVendorEmail)
 
 	DEF_CLASS2 (INLINE_UID_FROM_FUID(Steinberg::HelloWorld::MyProcessorUID),
 				PClassInfo::kManyInstances,	// cardinality  

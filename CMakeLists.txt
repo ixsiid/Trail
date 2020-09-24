@@ -31,7 +31,7 @@ if(SMTG_ADD_VSTGUI)
 endif()
 
 #--- HERE change the target Name for your plug-in (for ex. set(target myDelay))-------
-set(target sample)
+set(target ${PLUGIN_NAME})
 
 smtg_add_vst3plugin(${target} ${plug_sources})
 set_target_properties(${target} PROPERTIES ${SDK_IDE_MYPLUGINS_FOLDER})
@@ -42,3 +42,10 @@ if(SMTG_MAC)
 elseif(SMTG_WIN)
     target_sources(${target} PRIVATE resource/plug.rc)
 endif()
+
+add_definitions(-DPLUGIN_NAME="${PLUGIN_NAME}")
+add_definitions(-DVENDOR="${VENDOR}")
+add_definitions(-DURL="${URL}")
+add_definitions(-DMAIL="${MAIL}")
+add_definitions(-DCOPYRIGHT="${COPYRIGHT}")
+add_definitions(-DTRADEMARK="${TRADEMARK}")
