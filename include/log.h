@@ -5,8 +5,8 @@
 #define _ACTIVATE_LOG
 
 #ifdef _ACTIVATE_LOG
-#define LOG(x) Log::io->write(x)
-#define LOGN(...) sprintf(Log::buffer, __VA_ARGS__);\
+#define LOG(x) Log::io->write(x "\n")
+#define LOGN(format, ...) sprintf(Log::buffer, format "\n", ##__VA_ARGS__);\
                   Log::io->write(Log::buffer);
 #else
 #define LOG(x)

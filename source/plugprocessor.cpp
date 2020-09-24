@@ -17,7 +17,7 @@ namespace HelloWorld {
 
 //-----------------------------------------------------------------------------
 PlugProcessor::PlugProcessor() {
-	new Log();
+	LOG("Processor constructor");
 
 	// register its editor class
 	setControllerClass(MyControllerUID);
@@ -30,6 +30,8 @@ PlugProcessor::PlugProcessor() {
 
 	dft	= new DFT(dftnum);
 	proj = new Projection();
+
+	LOG("... Done");
 }
 
 PlugProcessor::~PlugProcessor() {
@@ -40,6 +42,7 @@ PlugProcessor::~PlugProcessor() {
 
 //-----------------------------------------------------------------------------
 tresult PLUGIN_API PlugProcessor::initialize(FUnknown* context) {
+	LOG("Processor Initialize");
 	//---always initialize the parent-------
 	tresult result = AudioEffect::initialize(context);
 	if (result != kResultTrue) return kResultFalse;
@@ -51,6 +54,8 @@ tresult PLUGIN_API PlugProcessor::initialize(FUnknown* context) {
 
 	addEventOutput(STR16("MIDI Out"), 1);
 
+	
+	LOG("... Done");
 	return kResultTrue;
 }
 

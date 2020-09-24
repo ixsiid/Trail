@@ -7,7 +7,9 @@ namespace HelloWorld {
 
 using namespace VSTGUI;
 
-NumericChangeView::NumericChangeView(const CRect& rect, IControlListener * listener, int32_t tag, char* bitmap, CRect bmpRect, int value, int min, int max) : CControl(rect, listener, tag, nullptr) {
+NumericChangeView::NumericChangeView(const CRect& rect, IControlListener * listener, int32_t tag,
+                                     char* bitmap, CRect bmpRect,
+							  int value, int min, int max) : CControl(rect, listener, tag, nullptr) {
 	this->current = value;
 	this->min	  = min;
 	this->max	  = max;

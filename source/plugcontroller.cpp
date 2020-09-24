@@ -14,6 +14,7 @@ namespace HelloWorld {
 
 //-----------------------------------------------------------------------------
 tresult PLUGIN_API PlugController::initialize(FUnknown* context) {
+	LOG("Controller Initialize");
 	tresult result = EditController::initialize(context);
 	if (result == kResultTrue) {
 		//---Create Parameters------------
@@ -37,6 +38,8 @@ tresult PLUGIN_API PlugController::initialize(FUnknown* context) {
 						    HelloWorldParams::kParamFp,
 						    0, STR16("Fp"));
 	}
+	
+	LOG("... Done");
 	return kResultTrue;
 }
 
@@ -52,6 +55,7 @@ tresult PLUGIN_API PlugController::setComponentState(IBStream* state) {
 
 IPlugView* PLUGIN_API PlugController::createView(FIDString name) {
 	if (strcmp(name, "editor") == 0) {
+		return nullptr;
 		GUI* view = new GUI(this, dft, proj);
 		return view;
 	}
@@ -59,7 +63,7 @@ IPlugView* PLUGIN_API PlugController::createView(FIDString name) {
 	return nullptr;
 }
 
-tresult PlugController::notify(Vst::IMessage* message) {
+tresult PLUGIN_API PlugController::notify(Vst::IMessage* message) {
 	if (strcmp(message->getMessageID(), u8"INITIALIZE") == 0) {
 		int64 p;
 		tresult r = message->getAttributes()->getInt(u8"PARAMETER", p);

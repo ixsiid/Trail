@@ -5,6 +5,8 @@
 #include "../include/plugids.h"			// for uids
 #include "../include/version.h"			// for version and naming
 
+#include "../include/log.h"
+
 #define stringSubCategory	"Fx" // "Fx|Analyzer"	// Subcategory for this plug-in (to be changed if needed, see PlugType in ivstaudioprocessor.h)
 
 BEGIN_FACTORY_DEF (stringVendorName, stringVendorWeb, stringVendorEmail)
@@ -39,6 +41,7 @@ END_FACTORY
 // called after library was loaded
 bool InitModule ()
 {
+	new Steinberg::HelloWorld::Log();
 	return true;
 }
 
@@ -46,5 +49,6 @@ bool InitModule ()
 // called after library is unloaded
 bool DeinitModule ()
 {
+	delete Steinberg::HelloWorld::Log::io;
 	return true;
 }

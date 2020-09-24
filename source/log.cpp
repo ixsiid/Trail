@@ -13,7 +13,7 @@ Log::Log() {
 	if (Log::io) return;
 
 	Log::io = this;
-	write("//-------------------//\n");
+	write("//----  Logging Start ----//\n");
 }
 
 #ifdef _ACTIVATE_LOG
@@ -21,6 +21,7 @@ Log* Log::io = nullptr;
 char Log::buffer[512];
 
 Log::~Log() {
+	write("// **** Logging Finish ----//\n");
 	fclose(fp);
 }
 
