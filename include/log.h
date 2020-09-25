@@ -2,15 +2,19 @@
 
 #include <public.sdk/source/vst/vstaudioeffect.h>
 
-// #define _ACTIVATE_LOG
+#ifdef _DEBUG
+#define _ACTIVATE_LOG
+#endif
 
 #ifdef _ACTIVATE_LOG
 #define LOG(x) Log::io->write(x "\n")
 #define LOGN(format, ...) sprintf(Log::buffer, format "\n", ##__VA_ARGS__);\
                   Log::io->write(Log::buffer);
+#define FREE_LOG() delete Steinberg::HelloWorld::Log::io
 #else
 #define LOG(x)
 #define LOGN(...)
+#define FREE_LOG()
 #endif
 
 namespace Steinberg {

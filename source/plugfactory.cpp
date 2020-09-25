@@ -7,7 +7,7 @@
 
 #include "../include/log.h"
 
-#define stringSubCategory	"Fx" // "Fx|Analyzer"	// Subcategory for this plug-in (to be changed if needed, see PlugType in ivstaudioprocessor.h)
+#define stringSubCategory	"Fx|Analyzer"	// Subcategory for this plug-in (to be changed if needed, see PlugType in ivstaudioprocessor.h)
 
 BEGIN_FACTORY_DEF (stringVendorName, stringVendorWeb, stringVendorEmail)
 
@@ -49,8 +49,6 @@ bool InitModule ()
 // called after library is unloaded
 bool DeinitModule ()
 {
-#ifdef _ACTIVATE_LOG
-	delete Steinberg::HelloWorld::Log::io;
-#endif
+	FREE_LOG();
 	return true;
 }

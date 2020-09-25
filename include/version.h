@@ -5,7 +5,7 @@
 #define MAJOR_VERSION_INT 1
 #define SUB_VERSION_INT 0
 #define RELEASE_NUMBER_INT 0
-#define BUILD_NUMBER_INT 1
+#define BUILD_NUMBER_INT 2
 
 // HERE you have to define your plug-in, company name, email and web
 #ifdef PLUGIN_NAME
