@@ -1,5 +1,7 @@
 ﻿#include "../include/dft.h"
 
+#include "../include/log.h"
+
 namespace Steinberg {
 namespace HelloWorld {
 
@@ -29,11 +31,16 @@ DFT::DFT(int num) {
 	im = new float[num];
 
 	spectrum = new float[256];
-	fpeak    = new float[256];
 	for (int i = 0; i < 256; i++) {
 		spectrum[i] = 0.0f;
-		fpeak[i]	  = -4.0f;
 	}
+
+	fpeak		= new Point[64];
+	fpeak[0].index = 0;
+	fpeak[0].value = noise_level;
+	fpeak[1].index = 256;
+	fpeak[1].value = noise_level;
+	fpeakCount	= 2;
 
 	int p = 0;
 	for (int i = 0; i < sizeof(int) * 8; i++) {
@@ -125,55 +132,35 @@ void DFT::process(float* source) {
 		float p = re[k] * re[k] + im[k] * im[k];
 
 		spectrum[i - 1] = logf(p * i);
-
-		fpeak[i - 1] = noise_level;
 	}
 
 	// F0推定
 	// 包括線を書く
-	int vertex[32];
-	float vertexValue[32];
-	vertex[0]		= 256;
-	vertexValue[0] = noise_level;
-	int vIndex	= 1;
-	float left	= noise_level;
+	fpeak[1].index = 256;
+	fpeak[0].value = fpeak[1].value = noise_level;
 
-	bool loop = true;
-	while (loop) {
-		loop			   = false;
-		float len_max	   = 0.0f;
-		int len_max_index = 0;
+	fpeakCount = 2;
+	while (fpeakCount < 64) {
+		fpeak[fpeakCount].value = 0.0f;
+		fpeak[fpeakCount].index = 0;
 
-		float a = (vertexValue[vIndex - 1] - left) / vertex[vIndex - 1];
-		for (int i = 1; i < vertex[vIndex - 1] - 1; i++) {
-			float y	= left + a * i;
-			float len = spectrum[i] - y;
-			if (len > len_max) {
-				len_max	    = len;
-				len_max_index = i;
-				loop		    = true;
+		float a = (fpeak[fpeakCount - 1].value - fpeak[0].value) / fpeak[fpeakCount - 1].index;
+		for (size_t i = fpeak[0].index + 1; i < fpeak[fpeakCount - 1].index - 1; i++) {
+			float y  = fpeak[0].value + a * i;
+			float dy = spectrum[i] - y;
+			if (dy > fpeak[fpeakCount].value) {
+				fpeak[fpeakCount].value = dy;
+				fpeak[fpeakCount].index = i;
 			}
 		}
-		if (loop) {
-			vertexValue[vIndex] = spectrum[len_max_index];
-			vertex[vIndex]		= len_max_index;
-			vIndex++;
+		if (fpeak[fpeakCount].index > 0) {
+			LOGN("%d", fpeak[fpeakCount].index);
+			fpeak[fpeakCount].value = spectrum[fpeak[fpeakCount].index];
+			fpeakCount++;
 		}
+		else break;
 	}
-
-	int leftIndex = 0;
-	left		    = noise_level;
-	f0		    = vertex[vIndex - 1];
-	while (vIndex-- > 0) {
-		int rightIndex = vertex[vIndex];
-		float right	= vertexValue[vIndex];
-		for (int i = leftIndex; i < rightIndex; i++) {
-			float a  = (float)(i - leftIndex) / (rightIndex - leftIndex);
-			fpeak[i] = a * (right - left) + left;
-		}
-		leftIndex = rightIndex;
-		left		= right;
-	}
+	f0 = fpeak[fpeakCount - 1].index;
 }
 
 }  // namespace HelloWorld

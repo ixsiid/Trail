@@ -5,6 +5,11 @@
 namespace Steinberg {
 namespace HelloWorld {
 
+struct Point {
+	size_t index;
+	float value;
+};
+
 class DFT {
     public:
 	DFT(int num);
@@ -12,7 +17,8 @@ class DFT {
 
 	void process(float* source);
 	float* spectrum;
-	float* fpeak;
+	Point* fpeak;
+	size_t fpeakCount;
 
 	double f0;
 	float noise_level;
