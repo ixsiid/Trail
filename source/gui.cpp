@@ -67,10 +67,36 @@ bool PLUGIN_API GUI::open(void* parent, const PlatformType& platformType) {
 										 vsize.top + slider_margin,
 										 vsize.top + slider_back->getHeight() - 2 * (slider_knob->getHeight() - slider_margin),
 										 slider_knob, slider_back);
+										 
 
 	Vst::ParamValue slider_value = controller->getParamNormalized(kNoiseLevel);
 	slider->setValueNormalized(slider_value);
 	frame->addView(slider);
+
+	slider_back->forget();
+	slider_knob->forget();
+
+										 
+	// 精度スライダー 
+	/*
+	CBitmap* p_slider_back = new CBitmap("v_slider_back.png");
+	CBitmap* p_slider_knob = new CBitmap("v_slider_knob.png");
+	CRect psize(0, 0, p_slider_back->getWidth(), p_slider_back->getHeight());
+	psize.offset(550, 6);
+	int p_slider_margin = 5;
+
+	CVerticalSlider* p_slider = new CVerticalSlider(psize, this, kPrecision,
+										 psize.top + p_slider_margin,
+										 psize.top + p_slider_back->getHeight() - 2 * (p_slider_knob->getHeight() - p_slider_margin),
+										 p_slider_knob, p_slider_back);
+
+	Vst::ParamValue p_slider_value = controller->getParamNormalized(kPrecision);
+	p_slider->setValueNormalized(p_slider_value);
+	frame->addView(p_slider);
+										 
+	p_slider_back->forget();
+	p_slider_knob->forget();
+	*/
 
 	// 作成したフレームを開く
 	frame->open(parent);
