@@ -54,7 +54,6 @@ tresult PLUGIN_API PlugProcessor::initialize(FUnknown* context) {
 
 	addEventOutput(STR16("MIDI Out"), 1);
 
-	
 	LOG("... Done");
 	return kResultTrue;
 }
@@ -169,25 +168,25 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData& data) {
 
 		if (data.outputEvents) data.outputEvents->addEvent(event);
 
-		value /= 512.0;
-		value = 1.0 - value;
-		if (value < 0.0)
-			value = 0.0;
-		else if (value > 1.0)
-			value = 1.0;
-
-		int32 paramIndex = 0;
-		int32 queueIndex = 0;
-		tresult r;
-
 		if (data.outputParameterChanges) {
+			value /= 512.0;
+			value = 1.0 - value;
+			if (value < 0.0)
+				value = 0.0;
+			else if (value > 1.0)
+				value = 1.0;
+
+			int32 paramIndex = 0;
+			int32 queueIndex = 0;
+			tresult r;
+
 			r = data.outputParameterChanges
 				   ->addParameterData(HelloWorldParams::kParamFp, paramIndex)
 				   ->addPoint(0, value, queueIndex);
 
 			r = data.outputParameterChanges
 				   ->addParameterData(HelloWorldParams::kParamF0, paramIndex)
-				   ->addPoint(0, dft->f0 * 8192 / 44100, queueIndex);
+				   ->addPoint(0, dft->f0 * 44100.0 / 8192.0 / 1400.0 / 2.0, queueIndex);
 		}
 	}
 	return kResultOk;

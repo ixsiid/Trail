@@ -28,12 +28,17 @@ tresult PLUGIN_API PlugController::initialize(FUnknown* context) {
 						    HelloWorldParams::kNoiseLevel,
 						    0, STR16("Noise"));
 
-		parameters.addParameter(STR16("F0"), STR16("Hz"), 0, 0.0,
+		parameters.addParameter(STR16("Precision"), 0, 3, 1.0,
+						    Vst::ParameterInfo::kIsHidden | Vst::ParameterInfo::kIsReadOnly,
+						    HelloWorldParams::kPrecision,
+						    0, STR16("Precision"));
+
+		parameters.addParameter(STR16("F0 [0, 1400]Hz to [0, 1] Normalized"), STR16("Hz"), 0, 0.0,
 						    Vst::ParameterInfo::kCanAutomate,
 						    HelloWorldParams::kParamF0,
 						    0, STR16("F0"));
 
-		parameters.addParameter(STR16("Fp"), STR16("[-1, 1]"), 0, 0.0,
+		parameters.addParameter(STR16("Fp"), STR16("[0, 1]"), 0, 0.5,
 						    Vst::ParameterInfo::kCanAutomate,
 						    HelloWorldParams::kParamFp,
 						    0, STR16("Fp"));
