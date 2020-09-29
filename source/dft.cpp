@@ -154,7 +154,6 @@ void DFT::process(float* source) {
 			}
 		}
 		if (fpeak[fpeakCount].index > 0) {
-			LOGN("%d", fpeak[fpeakCount].index);
 			fpeak[fpeakCount].value = spectrum[fpeak[fpeakCount].index];
 			fpeakCount++;
 		}

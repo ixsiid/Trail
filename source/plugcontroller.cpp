@@ -44,7 +44,6 @@ tresult PLUGIN_API PlugController::initialize(FUnknown* context) {
 						    0, STR16("Fp"));
 	}
 	
-	LOG("... Done");
 	return kResultTrue;
 }
 

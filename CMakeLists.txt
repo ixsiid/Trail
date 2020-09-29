@@ -19,6 +19,8 @@ set(plug_sources
     source/projectionView.cpp
     include/numericChangeView.h
     source/numericChangeView.cpp
+    include/StepVerticalSlider.h
+    source/StepVerticalSlider.cpp
 
     include/dft.h
     source/dft.cpp

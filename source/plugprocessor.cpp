@@ -30,8 +30,6 @@ PlugProcessor::PlugProcessor() {
 
 	dft	= new DFT(dftnum);
 	proj = new Projection();
-
-	LOG("... Done");
 }
 
 PlugProcessor::~PlugProcessor() {
@@ -53,8 +51,6 @@ tresult PLUGIN_API PlugProcessor::initialize(FUnknown* context) {
 	addAudioOutput(STR16("AudioOutput"), Vst::SpeakerArr::kMono);
 
 	addEventOutput(STR16("MIDI Out"), 1);
-
-	LOG("... Done");
 	return kResultTrue;
 }
 
