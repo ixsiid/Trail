@@ -28,7 +28,7 @@ PlugProcessor::PlugProcessor() {
 	for (int i = 0; i < bufferSize; i++) buffer[i] = 0;
 	index = 0;
 
-	dft	= new DFT(dftnum);
+	dft	= new DFT(dftnum, 44100.0);
 	proj = new Projection();
 }
 
@@ -70,7 +70,8 @@ tresult PLUGIN_API PlugProcessor::setBusArrangements(Vst::SpeakerArrangement* in
 tresult PLUGIN_API PlugProcessor::setupProcessing(Vst::ProcessSetup& setup) {
 	// here you get, with setup, information about:
 	// sampleRate, processMode, maximum number of samples per audio block
-	return AudioEffect::setupProcessing(setup);
+	LOGN("Set sample rate: %f", setup.sampleRate);
+	return dft->setSampleRate(setup.sampleRate) | AudioEffect::setupProcessing(setup);
 }
 
 //-----------------------------------------------------------------------------

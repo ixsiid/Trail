@@ -29,17 +29,18 @@ void WaveView::draw(CDrawContext* context) {
 	context->setLineStyle(lineStyle);
 
 	// スペクトル描画
+	double ax = 512 / dft->rangeF0Search;
 	context->setFrameColor(CColor(19, 193, 54, 255));
 	for (size_t x = 0; x < 256; ++x)
-		points[x] = CPoint(x * 2, dft->spectrum[x] * k + p);
+		points[x] = CPoint(x * ax, dft->spectrum[x] * k + p);
 	context->drawPolygon(points);
 
 	// 包括線描画
 	context->setFrameColor(CColor(193, 19, 54, 255));
 	CDrawContext::PointList peakPoints(dft->fpeakCount);
-	peakPoints[0] = CPoint(dft->fpeak[0].index * 2, dft->fpeak[0].value * k + p);
+	peakPoints[0] = CPoint(dft->fpeak[0].index * ax, dft->fpeak[0].value * k + p);
 	for (size_t x = 1; x < dft->fpeakCount; ++x)
-		peakPoints[x] = CPoint(dft->fpeak[dft->fpeakCount - x].index * 2,
+		peakPoints[x] = CPoint(dft->fpeak[dft->fpeakCount - x].index * ax,
 		                       dft->fpeak[dft->fpeakCount - x].value * k + p);
 	context->drawPolygon(peakPoints);
 
