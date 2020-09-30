@@ -64,9 +64,15 @@ CMouseEventResult ProjectionView::onMouseMoved(CPoint& pos, const CButtonState& 
 	m.y -= top;
 
 	if (drag) {
+		if (active == 0) m.x = 0.0;
+		if (active == 1) m.x = 512.0;
+
+		if (m.y < 0.0) m.y = 0.0;
+		else if (m.y > 512.0) m.y = 512.0;
+		if (m.x < 0.0) m.x = 0.0;
+		else if (m.x > 512.0) m.x = 512.0;
+		
 		_points[active] = m;
-		if (active == 0) _points[0].x = 0;
-		if (active == 1) _points[1].x = 512;
 
 		sortPoints();
 		return CMouseEventResult::kMouseEventHandled;
@@ -77,7 +83,7 @@ CMouseEventResult ProjectionView::onMouseMoved(CPoint& pos, const CButtonState& 
 		CCoord dx = m.x - _points[i].x;
 		CCoord dy = m.y - _points[i].y;
 		CCoord d	= dx * dx + dy * dy;
-		if (d < 49) {
+		if (d < 64) {
 			active = i;
 			break;
 		}
