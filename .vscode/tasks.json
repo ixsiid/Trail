@@ -8,15 +8,13 @@
 			"type": "shell",
 			"command": "./build.ps1",
 			"problemMatcher": [],
-			"group": {
-				"kind": "build",
-				"isDefault": true
-			}
+			"group": "build"
 		},
 		{
 			"label": "Clean",
 			"type": "shell",
-			"command": "./clean.ps1"
+			"command": "./clean.ps1",
+			"group": "build"
 		}
 	]
 }

@@ -12,19 +12,25 @@ struct Point {
 
 class DFT {
     public:
-	DFT(int num);
+	DFT(size_t num, double sampleRate);
 	~DFT();
 
 	void process(float* source);
+	tresult setSampleNum(size_t num);
+	tresult setSampleRate(double sampleRate);
+	tresult calculateF0Range(size_t num, double sampleRate);
+
 	float* spectrum;
 	Point* fpeak;
 	size_t fpeakCount;
 
 	double f0;
 	float noise_level;
+	size_t rangeF0Search;
 
     private:
-	int num;
+	const size_t MaxF0Range = 512;
+	size_t num;
 
 	float* re;
 	float* im;
@@ -32,6 +38,8 @@ class DFT {
 	int* index;
 	float* w_re;
 	float* w_im;
+
+	double sampleRate;
 };
 
 }  // namespace HelloWorld

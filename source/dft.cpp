@@ -5,8 +5,9 @@
 namespace Steinberg {
 namespace HelloWorld {
 
-DFT::DFT(int num) {
+DFT::DFT(size_t num, double sampleRate) {
 	this->num = num;
+	setSampleRate(sampleRate);
 
 	f0		  = 0.0;
 	noise_level = 0.0f;
@@ -30,15 +31,15 @@ DFT::DFT(int num) {
 	re = new float[num];
 	im = new float[num];
 
-	spectrum = new float[256];
-	for (int i = 0; i < 256; i++) {
+	spectrum = new float[MaxF0Range];
+	for (int i = 0; i < MaxF0Range; i++) {
 		spectrum[i] = 0.0f;
 	}
 
 	fpeak		= new Point[64];
 	fpeak[0].index = 0;
 	fpeak[0].value = noise_level;
-	fpeak[1].index = 256;
+	fpeak[1].index = rangeF0Search;
 	fpeak[1].value = noise_level;
 	fpeakCount	= 2;
 
@@ -94,6 +95,40 @@ DFT::~DFT() {
 	delete[] w_im;
 }
 
+tresult DFT::setSampleNum(size_t num) { return calculateF0Range(num, sampleRate); }
+tresult DFT::setSampleRate(double sampleRate) { return calculateF0Range(num, sampleRate); }
+tresult DFT::calculateF0Range(size_t num, double sampleRate) {
+	size_t prevNum		  = this->num;
+	double prevSampleRate = this->sampleRate;
+
+	this->num		  = num;
+	this->sampleRate = sampleRate;
+
+	this->rangeF0Search = 1381 * this->num / sampleRate;  // 8192samp, 44100Hzの時に256
+	/**
+	 * | num | rate | f0 | resolution [Hz]
+	 * | 8192| 48000| 235|  5.86
+	 * | 4096|      | 117| 11.72
+	 * | 2048|      |  58| 23.44
+	 * | 1024|      |  29| 46.88
+	 * |  512|      |  14| 93.75
+	 * | 8192| 44100| 256|  5.38
+	 * | 4096|      | 128| 10.77
+	 * | 2048|      |  64| 21.53
+	 * | 1024|      |  32| 43.07
+	 * |  512|      |  16| 86.13
+	 * 
+	 * 
+	 */
+
+	if (this->rangeF0Search == 0) {
+		calculateF0Range(prevNum, prevSampleRate);
+		return kResultFalse;
+	}
+	if (this->rangeF0Search > MaxF0Range) this->rangeF0Search = MaxF0Range;
+	return kResultOk;
+}
+
 void DFT::process(float* source) {
 	memcpy(re, source, sizeof(float) * num);
 	memset(im, 0, sizeof(float) * num);
@@ -127,7 +162,7 @@ void DFT::process(float* source) {
 	}
 
 	// 1 - 256 で 0(DC) - 1389.312Hz (44100), 1512.183Hz (44800)
-	for (int i = 1; i <= 256; i++) {
+	for (int i = 1; i <= rangeF0Search; i++) {
 		int k   = index[i];
 		float p = re[k] * re[k] + im[k] * im[k];
 
@@ -136,10 +171,10 @@ void DFT::process(float* source) {
 
 	// F0推定
 	// 包括線を書く
-	fpeak[1].index = 256;
+	fpeak[1].index = rangeF0Search;
 	fpeak[0].value = fpeak[1].value = noise_level;
+	fpeakCount				  = 2;
 
-	fpeakCount = 2;
 	while (fpeakCount < 64) {
 		fpeak[fpeakCount].value = 0.0f;
 		fpeak[fpeakCount].index = 0;
@@ -154,11 +189,10 @@ void DFT::process(float* source) {
 			}
 		}
 		if (fpeak[fpeakCount].index > 0) {
-			LOGN("%d", fpeak[fpeakCount].index);
 			fpeak[fpeakCount].value = spectrum[fpeak[fpeakCount].index];
 			fpeakCount++;
-		}
-		else break;
+		} else
+			break;
 	}
 	f0 = fpeak[fpeakCount - 1].index;
 }
