@@ -48,4 +48,6 @@ background.png PNG "..\\image\\background.png"
 allow.png PNG "..\\image\\allow.png"
 v_slider_back.png PNG "..\\image\\v_slider_back.png"
 v_slider_knob.png PNG "..\\image\\v_slider_knob.png"
+p_slider_back.png PNG "..\\image\\p_slider_back.png"
+p_slider_knob.png PNG "..\\image\\p_slider_knob.png"
 

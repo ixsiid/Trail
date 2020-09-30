@@ -20,8 +20,6 @@ CMouseEventResult Steinberg::HelloWorld::StepVerticalSlider::onMouseMoved(CPoint
 		double value = floor(rate * step + 0.5) / step;
 		value = value > 1.0 ? 1.0 : value < 0.0 ? 0.0 : value;
 
-		LOGN("top: %f, bottom: %f, handle: %f, rate: %f, value: %f", size.top, size.bottom, handle.y, rate, value);
-
 		if (value == prevValue) return kMouseEventHandled;
 
 		setValueNormalized(value);

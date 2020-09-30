@@ -80,15 +80,15 @@ bool PLUGIN_API GUI::open(void* parent, const PlatformType& platformType) {
 
 										 
 	// 精度スライダー 
-	CBitmap* p_slider_back = new CBitmap("v_slider_back.png");
-	CBitmap* p_slider_knob = new CBitmap("v_slider_knob.png");
+	CBitmap* p_slider_back = new CBitmap("p_slider_back.png");
+	CBitmap* p_slider_knob = new CBitmap("p_slider_knob.png");
 	CRect psize(0, 0, p_slider_back->getWidth(), p_slider_back->getHeight());
-	psize.offset(550, 6);
-	int p_slider_margin = 5;
+	psize.offset(620, 32);
+	int p_slider_margin = 3;
 
 	StepVerticalSlider* p_slider = new StepVerticalSlider(psize, this, kPrecision,
 										 psize.top + p_slider_margin,
-										 psize.top + p_slider_back->getHeight() - 2 * (p_slider_knob->getHeight() - p_slider_margin),
+										 psize.top + p_slider_back->getHeight() - (p_slider_knob->getHeight() - p_slider_margin + 1),
 										 p_slider_knob, p_slider_back, 3);
 
 	Vst::ParamValue p_slider_value = controller->getParamNormalized(kPrecision);
